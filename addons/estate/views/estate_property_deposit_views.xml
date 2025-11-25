@@ -1,0 +1,48 @@
+<odoo>
+    <data>
+        <record id="view_estate_property_deposit_tree" model="ir.ui.view">
+            <field name="name">estate.property.deposit.list</field>
+            <field name="model">estate.property.deposit</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="property_id"/>
+                    <field name="partner_id"/>
+                    <field name="amount"/>
+                    <field name="date_deposit"/>
+                    <field name="state"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_estate_property_deposit_form" model="ir.ui.view">
+            <field name="name">estate.property.deposit.form</field>
+            <field name="model">estate.property.deposit</field>
+            <field name="arch" type="xml">
+                <form string="Phiếu Đặt cọc">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" readonly="1"/>
+                                <field name="property_id"/>
+                                <field name="partner_id"/>
+                            </group>
+                            <group>
+                                <field name="amount"/>
+                                <field name="currency_id" readonly="1"/>
+                                <field name="date_deposit"/>
+                                <field name="state" readonly="1"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="note" colspan="4"/>
+                        </group>
+                        <footer>
+                            <button name="action_create_invoice" type="object" string="Tạo Hóa đơn" class="btn-primary"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,52 @@
+<odoo>
+    <data>
+        <record id="view_estate_invoice_tree" model="ir.ui.view">
+            <field name="name">estate.invoice.list</field>
+            <field name="model">estate.invoice</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="property_id"/>
+                    <field name="partner_id"/>
+                    <field name="type"/>
+                    <field name="amount_total"/>
+                    <field name="state"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_estate_invoice_form" model="ir.ui.view">
+            <field name="name">estate.invoice.form</field>
+            <field name="model">estate.invoice</field>
+            <field name="arch" type="xml">
+                <form string="Hóa đơn BĐS">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" readonly="1"/>
+                                <field name="property_id"/>
+                                <field name="partner_id"/>
+                            </group>
+                            <group>
+                                <field name="type"/>
+                                <field name="amount_total"/>
+                                <field name="currency_id" readonly="1"/>
+                                <field name="state" readonly="1"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                            <field name="origin"/>
+                        </group>
+                        <group>
+                            <field name="move_id" readonly="1"/>
+                        </group>
+                        <footer>
+                            <button name="action_post_entry" type="object" string="Tạo Hóa đơn Kế toán" class="btn-primary"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>
