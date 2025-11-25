@@ -4,6 +4,7 @@
     'depends': ['base', 'mail', 'website', 'account'],
     'data': [
         'security/ir.model.access.csv',
+        'data/sequence.xml',
         'views/estate_menu.xml',
         'views/estate_property_views.xml',
         'views/estate_property_type_views.xml',
