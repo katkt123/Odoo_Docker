@@ -23,6 +23,9 @@
             <field name="model">estate.property</field>
             <field name="arch" type="xml">
                 <form string="Bất động sản">
+                    <header>
+                        <field name="state" widget="statusbar" readonly="1"/>
+                    </header>
                     <sheet>
                         <group>
                             <group>
@@ -33,7 +36,6 @@
                             <group>
                                 <field name="expected_price"/>
                                 <field name="selling_price" readonly="1"/>
-                                <field name="state" readonly="1"/>
                             </group>
                         </group>
                         <notebook>

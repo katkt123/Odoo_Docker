@@ -105,3 +105,56 @@ class EstateInvoice(models.Model):
                 'target': 'current',
                 'flags': {'mode': 'readonly'},  # Chỉ cho phép xem
             }
+
+    def action_create_liquidation(self):
+        """Tạo hóa đơn kết toán (thanh toán tất toán)"""
+        self.ensure_one()
+        
+        # Tính toán số tiền còn lại cần thanh toán
+        property_price = self.property_id.selling_price if self.property_id.selling_price > 0 else self.property_id.expected_price
+        
+        # Tính tổng các hóa đơn đã thanh toán của BĐS này
+        paid_invoices = self.env['estate.invoice'].search([
+            ('property_id', '=', self.property_id.id),
+            ('state', '=', 'paid'),
+            ('id', '!=', self.id)
+        ])
+        total_paid = sum(invoice.amount_total for invoice in paid_invoices)
+        
+        # Số tiền cần thanh toán còn lại
+        remaining_amount = property_price - total_paid - self.amount_total
+        
+        # Tạo hóa đơn kết toán
+        liquidation_invoice = self.env['estate.invoice'].create({
+            'property_id': self.property_id.id,
+            'partner_id': self.partner_id.id,
+            'amount_total': remaining_amount,
+            'description': f"Thanh toán tất toán - {self.property_id.name}",
+            'type': 'liquidation',
+            'origin': f"Kết toán từ {self.name}"
+        })
+        
+        # Tự động tạo account.move cho hóa đơn kết toán
+        move_vals = {
+            'move_type': 'out_invoice',
+            'partner_id': self.partner_id.id,
+            'partner_shipping_id': self.partner_id.id,
+            'invoice_date': fields.Date.context_today(self),
+            'invoice_line_ids': [(0, 0, {
+                'name': f"Thanh toán tất toán - {self.property_id.name}",
+                'quantity': 1,
+                'price_unit': remaining_amount,
+                'account_id': self.partner_id.property_account_receivable_id.id,
+            })],
+        }
+        move = self.env['account.move'].with_context(default_move_type='out_invoice').create(move_vals)
+        liquidation_invoice.move_id = move.id
+        liquidation_invoice.state = 'posted'
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'estate.invoice',
+            'res_id': liquidation_invoice.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }

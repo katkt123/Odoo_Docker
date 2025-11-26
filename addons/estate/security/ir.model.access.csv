@@ -1,7 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_estate_property_user_read,estate.property.user.read,model_estate_property,base.group_user,1,1,1,1
-access_estate_property_type_user_read,estate.property.type.user.read,model_estate_property_type,base.group_user,1,1,1,1
-access_estate_property_tag_user_read,estate.property.tag.user.read,model_estate_property_tag,base.group_user,1,1,1,1
-access_estate_property_offer_user_read,estate.property.offer.user.read,model_estate_property_offer,base.group_user,1,1,1,1
-access_estate_property_deposit_user_read,estate.property.deposit.user.read,model_estate_property_deposit,base.group_user,1,1,1,1
-access_estate_invoice_user_read,estate.invoice.user.read,model_estate_invoice,base.group_user,1,1,1,1
+access_estate_property,access_estate_property,model_estate_property,base.group_user,1,1,1,1
+access_estate_property_type,access_estate_property_type,model_estate_property_type,base.group_user,1,1,1,1
+access_estate_property_tag,access_estate_property_tag,model_estate_property_tag,base.group_user,1,1,1,1
+access_estate_property_offer,access_estate_property_offer,model_estate_property_offer,base.group_user,1,1,1,1
+access_estate_property_deposit,access_estate_property_deposit,model_estate_property_deposit,base.group_user,1,1,1,1
+access_estate_invoice,access_estate_invoice,model_estate_invoice,base.group_user,1,1,1,1

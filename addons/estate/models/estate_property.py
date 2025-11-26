@@ -18,8 +18,6 @@ class EstateProperty(models.Model):
     currency_id = fields.Many2one('res.currency', string="Tiền tệ")
     state = fields.Selection([
         ('new', 'Mới'),
-        ('offer_received', 'Có đề nghị'),
-        ('offer_accepted', 'Đã nhận cọc'),
         ('sold', 'Đã bán'),
         ('canceled', 'Đã hủy'),
     ], default='new', tracking=True)

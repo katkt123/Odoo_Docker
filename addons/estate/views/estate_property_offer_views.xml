@@ -9,6 +9,8 @@
                     <field name="partner_id"/>
                     <field name="price"/>
                     <field name="status"/>
+                    <button name="action_accept" string="Chấp nhận" type="object" icon="fa-check" invisible="status != 'pending'" class="btn-primary"/>
+                    <button name="action_refuse" string="Từ chối" type="object" icon="fa-times" invisible="status != 'pending'" class="btn-secondary"/>
                 </list>
             </field>
         </record>
@@ -26,7 +28,8 @@
                             <field name="status"/>
                         </group>
                         <footer>
-                            <button name="action_accept" string="Chấp nhận" type="object" class="btn-primary"/>
+                            <button name="action_accept" string="Chấp nhận" type="object" class="btn-primary" invisible="status != 'pending'"/>
+                            <button name="action_refuse" string="Từ chối" type="object" class="btn-secondary" invisible="status != 'pending'"/>
                         </footer>
                     </sheet>
                 </form>

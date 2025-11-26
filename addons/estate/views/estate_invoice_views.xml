@@ -11,6 +11,8 @@
                     <field name="type"/>
                     <field name="amount_total"/>
                     <field name="state"/>
+                    <button name="action_post_entry" string="Tạo HĐ KT" type="object" icon="fa-file-text" invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_create_liquidation" string="Tạo HĐ Kết toán" type="object" icon="fa-calculator" invisible="state != 'posted'" class="btn-secondary"/>
                 </list>
             </field>
         </record>
@@ -42,7 +44,8 @@
                             <field name="move_id" readonly="1"/>
                         </group>
                         <footer>
-                            <button name="action_post_entry" type="object" string="Tạo Hóa đơn Kế toán" class="btn-primary"/>
+                            <button name="action_post_entry" type="object" string="Tạo Hóa đơn Kế toán" class="btn-primary" invisible="state != 'draft'"/>
+                            <button name="action_create_liquidation" type="object" string="Tạo Hóa đơn Kết toán" class="btn-secondary" invisible="state != 'posted'"/>
                         </footer>
                     </sheet>
                 </form>
