@@ -11,7 +11,7 @@
                     <button name="action_sync_paid_invoices"
                             type="object"
                             string="Đồng bộ Hóa đơn"
-                            class="oe_highlight"
+                            class="oe_highlight o_list_button_add"
                             icon="fa-refresh"/>
                 </header>
                 <field name="name"/>
@@ -113,33 +113,33 @@
 
         <!-- Cho phép hiển thị trong LIST VIEW -->
         <field name="binding_view_types">list</field>
-        
+
         <field name="state">code</field>
         <field name="code">
 def sync_invoices():
-    action = model.auto_create_revenue_from_paid_invoices()
-    if action:
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': 'Thành công!',
-                'message': f'Đã tạo {len(action)} khoản doanh thu từ hóa đơn đã thanh toán.',
-                'type': 'success',
-                'sticky': False,
-            }
-        }
-    else:
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': 'Thông báo',
-                'message': 'Không có hóa đơn đã thanh toán mới để đồng bộ.',
-                'type': 'info',
-                'sticky': False,
-            }
-        }
+            action = model.auto_create_revenue_from_paid_invoices()
+            if action:
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': 'Thành công!',
+                        'message': f'Đã tạo {len(action)} khoản doanh thu từ hóa đơn đã thanh toán.',
+                        'type': 'success',
+                        'sticky': False,
+                    }
+                }
+            else:
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': 'Thông báo',
+                        'message': 'Không có hóa đơn đã thanh toán mới để đồng bộ.',
+                        'type': 'info',
+                        'sticky': False,
+                    }
+                }
 sync_invoices()
         </field>
     </record>

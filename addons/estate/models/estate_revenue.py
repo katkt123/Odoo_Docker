@@ -40,6 +40,10 @@ class EstateRevenue(models.Model):
                     record.estate_invoice_id = paid_invoice.id
                     record.customer_id = paid_invoice.partner_id.id
                     record.payment_date = paid_invoice.move_id.invoice_date if paid_invoice.move_id else fields.Date.today()
+                    # Lấy số tiền từ giá bán của hóa đơn đã thanh toán
+                    record.amount = paid_invoice.amount_total
+                    # Gợi ý tên doanh thu dựa trên thông tin hóa đơn
+                    record.name = f"Doanh thu từ {record.property_id.name} - {paid_invoice.name}"
             else:
                 record.paid_invoice_id = False
     

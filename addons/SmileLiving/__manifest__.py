@@ -1,15 +1,13 @@
 {
     'name': "SmileLiving",
     'version': '1.0',
-    'depends': ['base', 'mail', 'website', 'account', 'web'],
+    'depends': ['base', 'mail', 'web'],
     'data': [
-        
+        'security/ir.model.access.csv',
+        'views/house_property_views.xml',
+        'views/invoice_property_views.xml',
+        'views/property_type_views.xml',
     ],
-    'assets': {
-        # 'web.assets_backend': [
-        #     'estate/static/src/js/sweet_alert.js',
-        # ],
-    },
     'installable': True,
     'application': True,
     'auto_install': False,
