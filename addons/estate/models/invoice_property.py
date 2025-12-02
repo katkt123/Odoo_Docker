@@ -76,10 +76,10 @@ class EstateInvoice(models.Model):
                     'res_id': record.move_id.id,
                     'view_mode': 'form',
                     'target': 'current',
-                    'flags': {'mode': 'readonly'},  # Chỉ cho phép xem
+                    'flags': {'mode': 'readonly'},  
                 }
             
-            # Tạo hóa đơn mới nếu chưa có
+            
             move_vals = {
                 'move_type': 'out_invoice',
                 'partner_id': record.partner_id.id,
@@ -107,13 +107,13 @@ class EstateInvoice(models.Model):
             }
 
     def action_create_liquidation(self):
-        """Tạo hóa đơn kết toán (thanh toán tất toán)"""
+        """Chuyển hóa đơn hiện tại thành hóa đơn kết toán (thanh toán tất toán)"""
         self.ensure_one()
         
         # Tính toán số tiền còn lại cần thanh toán
         property_price = self.property_id.selling_price if self.property_id.selling_price > 0 else self.property_id.expected_price
         
-        # Tính tổng các hóa đơn đã thanh toán của BĐS này
+        # Tính tổng các hóa đơn đã thanh toán của BĐS này (trừ bản ghi hiện tại)
         paid_invoices = self.env['estate.invoice'].search([
             ('property_id', '=', self.property_id.id),
             ('state', '=', 'paid'),
@@ -121,40 +121,53 @@ class EstateInvoice(models.Model):
         ])
         total_paid = sum(invoice.amount_total for invoice in paid_invoices)
         
-        # Số tiền cần thanh toán còn lại
+        # Số tiền cần thanh toán còn lại (tổng giá - đã thanh toán - tiền cọc)
         remaining_amount = property_price - total_paid - self.amount_total
         
-        # Tạo hóa đơn kết toán
-        liquidation_invoice = self.env['estate.invoice'].create({
-            'property_id': self.property_id.id,
-            'partner_id': self.partner_id.id,
+        # Cập nhật hóa đơn hiện tại thành hóa đơn kết toán
+        self.write({
             'amount_total': remaining_amount,
             'description': f"Thanh toán tất toán - {self.property_id.name}",
             'type': 'liquidation',
-            'origin': f"Kết toán từ {self.name}"
+            'origin': f"Kết toán từ hóa đơn cọc {self.name}"
         })
         
-        # Tự động tạo account.move cho hóa đơn kết toán
-        move_vals = {
-            'move_type': 'out_invoice',
-            'partner_id': self.partner_id.id,
-            'partner_shipping_id': self.partner_id.id,
-            'invoice_date': fields.Date.context_today(self),
-            'invoice_line_ids': [(0, 0, {
-                'name': f"Thanh toán tất toán - {self.property_id.name}",
-                'quantity': 1,
-                'price_unit': remaining_amount,
-                'account_id': self.partner_id.property_account_receivable_id.id,
-            })],
-        }
-        move = self.env['account.move'].with_context(default_move_type='out_invoice').create(move_vals)
-        liquidation_invoice.move_id = move.id
-        liquidation_invoice.state = 'posted'
+        # Cập nhật account.move hiện tại
+        if self.move_id and self.move_id.invoice_line_ids:
+            # Cập nhật các dòng trong account.move
+            self.move_id.write({
+                'invoice_line_ids': [(1, self.move_id.invoice_line_ids[0].id, {
+                    'name': f"Thanh toán tất toán - {self.property_id.name}",
+                    'quantity': 1,
+                    'price_unit': remaining_amount,
+                })],
+            })
+        else:
+            # Tạo mới account.move nếu chưa có hoặc không có dòng nào
+            move_vals = {
+                'move_type': 'out_invoice',
+                'partner_id': self.partner_id.id,
+                'partner_shipping_id': self.partner_id.id,
+                'invoice_date': fields.Date.context_today(self),
+                'invoice_line_ids': [(0, 0, {
+                    'name': f"Thanh toán tất toán - {self.property_id.name}",
+                    'quantity': 1,
+                    'price_unit': remaining_amount,
+                    'account_id': self.partner_id.property_account_receivable_id.id,
+                })],
+            }
+            move = self.env['account.move'].with_context(default_move_type='out_invoice').create(move_vals)
+            self.move_id = move.id
+        
+        self.state = 'posted'
         
         return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'estate.invoice',
-            'res_id': liquidation_invoice.id,
-            'view_mode': 'form',
-            'target': 'current',
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Thành công!',
+                'message': f'Đã chuyển thành hóa đơn kết toán: {remaining_amount:,.0f}',
+                'type': 'success',
+                'sticky': False,
+            }
         }

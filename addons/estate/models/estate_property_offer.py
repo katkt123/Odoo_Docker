@@ -52,19 +52,7 @@ class EstatePropertyOffer(models.Model):
                 _logger.info(f"Created deposit {deposit.name} for offer {record.id}")
                 
                 # Hiển thị thông báo thành công
-                message = f"""
-                Đã chấp nhận đề nghị thành công!
-                
-                Thông tin:
-                • BĐS: {record.property_id.name}
-                • Giá đề nghị: {record.price:,.0f}
-                • Khách hàng: {record.partner_id.name}
-                • Tiền cọc (10%): {record.price * 0.1:,.0f}
-                • Mã đặt cọc: {deposit.name}
-                
-                BĐS đã chuyển sang trạng thái "Đã bán"
-                Vui lòng kiểm tra phiếu đặt cọc để tiến hành thanh toán
-                """
+                message = f"Đã chấp nhận đề nghị {record.price:,.0f}. Tạo deposit {deposit.name} thành công!"
                 
             except Exception as e:
                 _logger.error(f"Failed to create deposit: {str(e)}")
@@ -74,10 +62,10 @@ class EstatePropertyOffer(models.Model):
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': 'Chấp nhận đề nghị thành công!',
+                'title': 'Thành công!',
                 'message': message.strip(),
                 'type': 'success',
-                'sticky': True,  # Giữ thông báo cho đến khi user đóng
+                'sticky': False,
             }
         }
 
@@ -90,8 +78,8 @@ class EstatePropertyOffer(models.Model):
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': 'Từ chối đề nghị',
-                'message': f'Đã từ chối đề nghị giá {self.price:,.0f} từ khách hàng {self.partner_id.name}',
+                'title': 'Đã từ chối',
+                'message': f'Đề nghị {self.price:,.0f} đã bị từ chối',
                 'type': 'warning',
                 'sticky': False,
             }

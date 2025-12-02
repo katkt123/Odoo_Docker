@@ -175,8 +175,8 @@ class EstatePropertyDeposit(models.Model):
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': 'Đã hủy đặt cọc',
-                'message': f'Đã hủy phiếu đặt cọc {self.name}. Bất động sản đã chuyển về trạng thái "Mới".',
+                'title': 'Đã hủy',
+                'message': f'Phiếu đặt cọc {self.name} đã bị hủy',
                 'type': 'warning',
                 'sticky': False,
             }
