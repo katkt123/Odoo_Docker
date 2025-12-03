@@ -27,7 +27,7 @@ class PropertyType(models.Model):
             'type': 'ir.actions.act_window',
             'name': 'Bất Động Sản',
             'res_model': 'smileliving.house',
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'domain': [('type_id', '=', self.id)],
             'context': {'default_type_id': self.id},
         }
@@ -37,7 +37,7 @@ class PropertyType(models.Model):
             'type': 'ir.actions.act_window',
             'name': 'Tiện Ích',
             'res_model': 'smileliving.amenity',
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'domain': [('id', 'in', self.amenity_ids.ids)],
         }
 

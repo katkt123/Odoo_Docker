@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Homepage - Property Listing -->
+        <template id="homepage" name="SmileLiving Homepage">
+            <t t-call="website.layout">
+                <div id="wrap" class="oe_structure">
+                    <section class="py-5">
+                        <div class="container">
+                            <h1 class="mb-4">SmileLiving - Bất Động Sản</h1>
+                            <div class="row">
+                                <t t-foreach="properties" t-as="property">
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card">
+                                            <t t-if="property.image">
+                                                <img t-att-src="'data:image/png;base64,%s' % property.image" class="card-img-top"/>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                                    <span class="text-muted">Không có hình</span>
+                                                </div>
+                                            </t>
+                                            <div class="card-body">
+                                                <h5 t-esc="property.name"/>
+                                                <p class="text-muted" t-esc="property.address"/>
+                                                <p><strong>Giá: </strong><span t-esc="property.price"/> VNĐ</p>
+                                                <span class="badge bg-success" t-if="property.status == 'available'">Còn trống</span>
+                                                <span class="badge bg-warning" t-elif="property.status == 'sold'">Đã bán</span>
+                                                <br/><br/>
+                                                <a t-attf-href="/smileliving/property/{{property.id}}" class="btn btn-primary">Xem chi tiết</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </template>
+
+        <!-- Property Listing -->
+        <template id="property_listing" name="Property Listing">
+            <t t-call="website.layout">
+                <div id="wrap" class="oe_structure">
+                    <section class="py-5">
+                        <div class="container">
+                            <h1 class="mb-4">Danh Sách Bất Động Sản</h1>
+                            
+                            <!-- Filter -->
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <select name="type" class="form-select" onchange="window.location.href='/smileliving/properties?type=' + this.value">
+                                        <option value="">Tất cả loại</option>
+                                        <t t-foreach="property_types" t-as="type">
+                                            <option t-att-value="type.id" t-esc="type.name"/>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Properties Grid -->
+                            <div class="row">
+                                <t t-foreach="properties" t-as="property">
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5 t-esc="property.name"/>
+                                                <p class="text-muted" t-esc="property.address"/>
+                                                <p><strong>Giá: </strong><span t-esc="property.price"/> VNĐ</p>
+                                                <span class="badge bg-success" t-if="property.status == 'available'">Còn trống</span>
+                                                <span class="badge bg-warning" t-elif="property.status == 'sold'">Đã bán</span>
+                                                <br/><br/>
+                                                <a t-attf-href="/smileliving/property/{{property.id}}" class="btn btn-primary">Xem chi tiết</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </template>
+
+        <!-- Property Detail -->
+        <template id="property_detail" name="Property Detail">
+            <t t-call="website.layout">
+                <div id="wrap" class="oe_structure">
+                    <section class="py-5">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h1 t-esc="property.name"/>
+                                    <p class="text-muted" t-esc="property.address"/>
+                                    
+                                    <div class="mb-3">
+                                        <span class="badge bg-success" t-if="property.status == 'available'">Còn trống</span>
+                                        <span class="badge bg-warning" t-elif="property.status == 'sold'">Đã bán</span>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <strong>Giá: </strong><span t-esc="property.price"/> VNĐ
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Diện tích: </strong><span t-esc="property.area"/> m²
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <strong>Loại hình: </strong>
+                                        <span t-esc="property.type_id.name" t-if="property.type_id"/>
+                                        <span t-else="">Chưa xác định</span>
+                                    </div>
+                                    
+                                    <h4>Mô tả</h4>
+                                    <p t-esc="property.description or 'Chưa có mô tả'"/>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Thông tin</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p><strong>Trạng thái: </strong>
+                                                <span class="badge bg-success" t-if="property.status == 'available'">Còn trống</span>
+                                                <span class="badge bg-warning" t-elif="property.status == 'sold'">Đã bán</span>
+                                            </p>
+                                            <p><strong>Ngày tạo: </strong><span t-esc="property.created_date"/></p>
+                                            <a href="/smileliving" class="btn btn-secondary">Quay lại</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </template>
+
+    </data>
+</odoo>

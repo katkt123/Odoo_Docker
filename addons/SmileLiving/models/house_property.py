@@ -80,7 +80,7 @@ class HouseProperty(models.Model):
             'type': 'ir.actions.act_window',
             'name': 'Hóa Đơn',
             'res_model': 'smileliving.invoice',
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'domain': [('property_id', '=', self.id)],
             'context': {'default_property_id': self.id},
         }
