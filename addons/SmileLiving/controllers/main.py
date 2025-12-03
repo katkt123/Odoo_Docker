@@ -57,7 +57,8 @@ class SmileLivingController(http.Controller):
         property = request.env['smileliving.house'].browse(property_id)
         if not property.exists():
             return request.not_found()
-            
+             
         return request.render('smileliving.property_detail', {
             'property': property,
+            'google_maps_embed_url': property.google_maps_embed_url,
         })
