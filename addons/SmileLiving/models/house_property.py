@@ -95,6 +95,40 @@ class HouseProperty(models.Model):
             }
         return False
 
+    def action_create_crm_lead(self):
+        lead_name = f"Quan tâm: {self.name} - {self.address}"
+
+        description = f"""
+        Khách hàng quan tâm bất động sản:
+        - Tên: {self.name}
+        - Địa chỉ: {self.address}
+        - Giá: {self.price:,.0f} VNĐ
+        - Diện tích: {self.area} m²
+        - Loại hình: {self.type_id.name if self.type_id else 'Chưa xác định'}
+        - Trạng thái: {dict(self._fields['status'].selection).get(self.status)}
+        """
+
+        lead_vals = {
+            'name': lead_name,
+            'description': description,
+            
+            'priority': '2',    # High
+        }
+
+        
+        if self.env.user and not self.env.user._is_public():
+            lead_vals['partner_id'] = self.env.user.partner_id.id
+
+        lead = self.env['crm.lead'].sudo().create(lead_vals)
+
+        self.message_post(body=f"Đã tạo CRM Lead <a href='#' data-oe-model='crm.lead' data-oe-id='{lead.id}'>{lead.name}</a>")
+        return {
+            'success': True,
+            'lead_id': lead.id,
+            'lead_name': lead.name,
+            'message': f"Đã tạo lead: {lead.name}"
+        }
+
     @api.onchange('address')
     def _onchange_address(self):
         if self.address:

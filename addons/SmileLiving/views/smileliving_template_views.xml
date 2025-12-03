@@ -21,7 +21,12 @@
                                                 </div>
                                             </t>
                                             <div class="card-body">
-                                                <h5 t-esc="property.name"/>
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <h5 t-esc="property.name"/>
+                                                    <a href="#" class="text-warning favorite-btn" t-att-data-property-id="property.id" title="Quan tâm">
+                                                        <i class="fa fa-heart"></i>
+                                                    </a>
+                                                </div>
                                                 <p class="text-muted" t-esc="property.address"/>
                                                 <p><strong>Giá: </strong><span t-esc="property.price"/> VNĐ</p>
                                                 <span class="badge bg-success" t-if="property.status == 'available'">Còn trống</span>
@@ -36,6 +41,38 @@
                         </div>
                     </section>
                 </div>
+                
+                <!-- JavaScript for favorite buttons -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var favoriteBtns = document.querySelectorAll('.favorite-btn');
+                        favoriteBtns.forEach(function(btn) {
+                            btn.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                var propertyId = this.getAttribute('data-property-id');
+                                window.location.href = '/smileliving/interest/' + propertyId;
+                            });
+                        });
+                    });
+                </script>
+                
+                <!-- CSS for favorite buttons -->
+                <style>
+                    .favorite-btn {
+                        font-size: 1.5rem;
+                        text-decoration: none;
+                        transition: all 0.3s ease;
+                        color: #ffc107 !important;
+                    }
+                    .favorite-btn:hover {
+                        color: #ff6b6b !important;
+                        transform: scale(1.1);
+                    }
+                    .favorite-btn:focus {
+                        outline: none;
+                        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+                    }
+                </style>
             </t>
         </template>
 
@@ -65,7 +102,12 @@
                                     <div class="col-md-4 mb-4">
                                         <div class="card">
                                             <div class="card-body">
-                                                <h5 t-esc="property.name"/>
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <h5 t-esc="property.name"/>
+                                                    <a href="#" class="text-warning favorite-btn" t-att-data-property-id="property.id" title="Quan tâm">
+                                                        <i class="fa fa-heart"></i>
+                                                    </a>
+                                                </div>
                                                 <p class="text-muted" t-esc="property.address"/>
                                                 <p><strong>Giá: </strong><span t-esc="property.price"/> VNĐ</p>
                                                 <span class="badge bg-success" t-if="property.status == 'available'">Còn trống</span>
@@ -80,6 +122,38 @@
                         </div>
                     </section>
                 </div>
+                
+                <!-- JavaScript for favorite buttons -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var favoriteBtns = document.querySelectorAll('.favorite-btn');
+                        favoriteBtns.forEach(function(btn) {
+                            btn.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                var propertyId = this.getAttribute('data-property-id');
+                                window.location.href = '/smileliving/interest/' + propertyId;
+                            });
+                        });
+                    });
+                </script>
+                
+                <!-- CSS for favorite buttons -->
+                <style>
+                    .favorite-btn {
+                        font-size: 1.5rem;
+                        text-decoration: none;
+                        transition: all 0.3s ease;
+                        color: #ffc107 !important;
+                    }
+                    .favorite-btn:hover {
+                        color: #ff6b6b !important;
+                        transform: scale(1.1);
+                    }
+                    .favorite-btn:focus {
+                        outline: none;
+                        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+                    }
+                </style>
             </t>
         </template>
 
@@ -144,6 +218,125 @@
                                             </p>
                                             <p><strong>Ngày tạo: </strong><span t-esc="property.created_date"/></p>
                                             <a href="/smileliving" class="btn btn-secondary">Quay lại</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </template>
+
+        <!-- Interest Form -->
+        <template id="interest_form" name="Interest Form">
+            <t t-call="website.layout">
+                <div id="wrap" class="oe_structure">
+                    <section class="py-5">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-md-8">
+                                    <div class="card">
+                                        <div class="card-header bg-primary text-white">
+                                            <h3 class="mb-0">Quan Tâm Bất Động Sản</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <!-- Property Info -->
+                                            <div class="alert alert-info mb-4">
+                                                <h5 t-esc="property.name"/>
+                                                <p class="mb-1"><strong>Địa chỉ:</strong> <span t-esc="property.address"/></p>
+                                                <p class="mb-1"><strong>Giá:</strong> <span t-esc="property.price"/> VNĐ</p>
+                                                <p class="mb-0"><strong>Diện tích:</strong> <span t-esc="property.area"/> m²</p>
+                                            </div>
+                                            
+                                            <!-- Error Message -->
+                                            <div t-if="error" class="alert alert-danger">
+                                                <span t-esc="error"/>
+                                            </div>
+                                            
+                                            <!-- Interest Form -->
+                                            <form t-attf-action="/smileliving/submit_interest/{{property.id}}" method="POST">
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="name" class="form-label">Họ tên *</label>
+                                                        <input type="text" class="form-control" id="name" name="name" 
+                                                               t-att-value="values.get('name', '') if values else ''" required="required"/>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="email" class="form-label">Email *</label>
+                                                        <input type="email" class="form-control" id="email" name="email" 
+                                                               t-att-value="values.get('email', '') if values else ''" required="required"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="phone" class="form-label">Số điện thoại *</label>
+                                                        <input type="tel" class="form-control" id="phone" name="phone" 
+                                                               t-att-value="values.get('phone', '') if values else ''" required="required"/>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="message" class="form-label">Tin nhắn</label>
+                                                    <textarea class="form-control" id="message" name="message" rows="4" 
+                                                              t-esc="values.get('message', '') if values else ''"></textarea>
+                                                </div>
+                                                <div class="d-flex justify-content-between">
+                                                    <a t-attf-href="/smileliving/property/{{property.id}}" class="btn btn-secondary">
+                                                        <i class="fa fa-arrow-left"></i> Quay lại
+                                                    </a>
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="fa fa-paper-plane"></i> Gửi Yêu Cầu
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </template>
+
+        <!-- Interest Success -->
+        <template id="interest_success" name="Interest Success">
+            <t t-call="website.layout">
+                <div id="wrap" class="oe_structure">
+                    <section class="py-5">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-md-8">
+                                    <div class="card">
+                                        <div class="card-header bg-success text-white">
+                                            <h3 class="mb-0">Gửi Yêu Cầu Thành Công!</h3>
+                                        </div>
+                                        <div class="card-body text-center">
+                                            <div class="mb-4">
+                                                <i class="fa fa-check-circle text-success" style="font-size: 4rem;"></i>
+                                            </div>
+                                            <h4>Cảm ơn <span t-esc="customer_name"/> đã quan tâm!</h4>
+                                            <p class="text-muted mb-4">
+                                                Chúng tôi đã nhận được yêu cầu quan tâm bất động sản <strong t-esc="property.name"/>.
+                                                Đội ngũ bán hàng sẽ liên hệ với bạn trong thời gian sớm nhất.
+                                            </p>
+                                            
+                                            <div class="alert alert-info text-start">
+                                                <h6>Thông tin bất động sản:</h6>
+                                                <p class="mb-1"><strong>Tên:</strong> <span t-esc="property.name"/></p>
+                                                <p class="mb-1"><strong>Địa chỉ:</strong> <span t-esc="property.address"/></p>
+                                                <p class="mb-1"><strong>Giá:</strong> <span t-esc="property.price"/> VNĐ</p>
+                                                <p class="mb-0"><strong>Diện tích:</strong> <span t-esc="property.area"/> m²</p>
+                                            </div>
+                                            
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a href="/smileliving" class="btn btn-primary">
+                                                    <i class="fa fa-home"></i> Xem thêm bất động sản
+                                                </a>
+                                                <a t-attf-href="/smileliving/property/{{property.id}}" class="btn btn-outline-primary">
+                                                    <i class="fa fa-info-circle"></i> Xem chi tiết
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
