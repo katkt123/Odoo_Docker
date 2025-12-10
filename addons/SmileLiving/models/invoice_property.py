@@ -9,7 +9,8 @@ class InvoiceProperty(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'date desc, id desc'
 
-    property_id = fields.Many2one('smileliving.house', string='Bất Động Sản', required=True)
+    property_id = fields.Many2one('product.template', string='Bất Động Sản', required=True, 
+                                domain="[('is_house', '=', True)]")
     amount = fields.Monetary(string='Số Tiền', required=True)
     date = fields.Date(string='Ngày Lập Hóa Đơn', default=fields.Date.today)
     state = fields.Selection([

@@ -20,16 +20,19 @@ class PropertyType(models.Model):
     @api.depends('name')
     def _compute_property_count(self):
         for record in self:
-            record.property_count = self.env['smileliving.house'].search_count([('type_id', '=', record.id)])
+            record.property_count = self.env['product.template'].search_count([
+                ('is_house', '=', True),
+                ('type_id', '=', record.id)
+            ])
 
     def action_view_properties(self):
         return {
             'type': 'ir.actions.act_window',
             'name': 'Bất Động Sản',
-            'res_model': 'smileliving.house',
+            'res_model': 'product.template',
             'view_mode': 'list,form',
-            'domain': [('type_id', '=', self.id)],
-            'context': {'default_type_id': self.id},
+            'domain': [('is_house', '=', True), ('type_id', '=', self.id)],
+            'context': {'default_type_id': self.id, 'default_is_house': True},
         }
 
     def action_view_amenities(self):

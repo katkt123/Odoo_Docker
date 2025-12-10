@@ -1,7 +1,7 @@
 {
     'name': "SmileLiving",
     'version': '1.0',
-    'depends': ['base', 'mail', 'web', 'website'],
+    'depends': ['base', 'mail', 'web', 'website', 'website_sale'],
     'data': [
         'security/ir.model.access.csv',
         'views/house_property_views.xml',

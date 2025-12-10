@@ -10,29 +10,33 @@
                             <h1 class="mb-4">SmileLiving - Bất Động Sản</h1>
                             <div class="row">
                                 <t t-foreach="properties" t-as="property">
-                                    <div class="col-md-4 mb-4">
-                                        <div class="card">
-                                            <t t-if="property.image">
-                                                <img t-att-src="'data:image/png;base64,%s' % property.image" class="card-img-top"/>
+                                    <div class="col-lg-4 col-md-6 mb-4">
+                                        <div class="card h-100 shadow-sm">
+                                            <t t-if="property.image_1920">
+                                                <img t-att-src="'/web/image/product.template/' + str(property.id) + '/image_1920'" class="card-img-top" style="height: 200px; object-fit: cover;"/>
                                             </t>
                                             <t t-else="">
                                                 <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
                                                     <span class="text-muted">Không có hình</span>
                                                 </div>
                                             </t>
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between align-items-start">
-                                                    <h5 t-esc="property.name"/>
+                                            <div class="card-body d-flex flex-column">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title" t-esc="property.name"/>
                                                     <a href="#" class="text-warning favorite-btn" t-att-data-property-id="property.id" title="Quan tâm">
                                                         <i class="fa fa-heart"></i>
                                                     </a>
                                                 </div>
-                                                <p class="text-muted" t-esc="property.address"/>
-                                                <p><strong>Giá: </strong><span t-esc="property.price"/> VNĐ</p>
-                                                <span class="badge bg-success" t-if="property.status == 'available'">Còn trống</span>
-                                                <span class="badge bg-warning" t-elif="property.status == 'sold'">Đã bán</span>
-                                                <br/><br/>
-                                                <a t-attf-href="/smileliving/property/{{property.id}}" class="btn btn-primary">Xem chi tiết</a>
+                                                <p class="card-text text-muted small mb-2" t-esc="property.address"/>
+                                                <p class="card-text"><strong>Giá: </strong><span t-esc="property.list_price"/> VNĐ</p>
+                                                <div class="mt-auto">
+                                                    <span class="badge bg-success" t-if="property.house_status == 'available'">Còn trống</span>
+                                                    <span class="badge bg-warning" t-elif="property.house_status == 'sold'">Đã bán</span>
+                                                    <span class="badge bg-secondary" t-else="">Khác</span>
+                                                    <div class="mt-2">
+                                                        <a t-attf-href="/smileliving/property/{{property.id}}" class="btn btn-primary btn-sm">Xem chi tiết</a>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -101,6 +105,14 @@
                                 <t t-foreach="properties" t-as="property">
                                     <div class="col-md-4 mb-4">
                                         <div class="card">
+                                            <t t-if="property.image_1920">
+                                                <img t-att-src="'/web/image/product.template/' + str(property.id) + '/image_1920'" class="card-img-top"/>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                                    <span class="text-muted">Không có hình</span>
+                                                </div>
+                                            </t>
                                             <div class="card-body">
                                                 <div class="d-flex justify-content-between align-items-start">
                                                     <h5 t-esc="property.name"/>
@@ -109,9 +121,9 @@
                                                     </a>
                                                 </div>
                                                 <p class="text-muted" t-esc="property.address"/>
-                                                <p><strong>Giá: </strong><span t-esc="property.price"/> VNĐ</p>
-                                                <span class="badge bg-success" t-if="property.status == 'available'">Còn trống</span>
-                                                <span class="badge bg-warning" t-elif="property.status == 'sold'">Đã bán</span>
+                                                <p><strong>Giá: </strong><span t-esc="property.list_price"/> VNĐ</p>
+                                                <span class="badge bg-success" t-if="property.house_status == 'available'">Còn trống</span>
+                                                <span class="badge bg-warning" t-elif="property.house_status == 'sold'">Đã bán</span>
                                                 <br/><br/>
                                                 <a t-attf-href="/smileliving/property/{{property.id}}" class="btn btn-primary">Xem chi tiết</a>
                                             </div>
@@ -169,13 +181,13 @@
                                     <p class="text-muted" t-esc="property.address"/>
                                     
                                     <div class="mb-3">
-                                        <span class="badge bg-success" t-if="property.status == 'available'">Còn trống</span>
-                                        <span class="badge bg-warning" t-elif="property.status == 'sold'">Đã bán</span>
+                                        <span class="badge bg-success" t-if="property.house_status == 'available'">Còn trống</span>
+                                        <span class="badge bg-warning" t-elif="property.house_status == 'sold'">Đã bán</span>
                                     </div>
                                     
                                     <div class="row mb-3">
                                         <div class="col-md-6">
-                                            <strong>Giá: </strong><span t-esc="property.price"/> VNĐ
+                                            <strong>Giá: </strong><span t-esc="property.list_price"/> VNĐ
                                         </div>
                                         <div class="col-md-6">
                                             <strong>Diện tích: </strong><span t-esc="property.area"/> m²
@@ -213,10 +225,10 @@
                                         </div>
                                         <div class="card-body">
                                             <p><strong>Trạng thái: </strong>
-                                                <span class="badge bg-success" t-if="property.status == 'available'">Còn trống</span>
-                                                <span class="badge bg-warning" t-elif="property.status == 'sold'">Đã bán</span>
+                                                <span class="badge bg-success" t-if="property.house_status == 'available'">Còn trống</span>
+                                                <span class="badge bg-warning" t-elif="property.house_status == 'sold'">Đã bán</span>
                                             </p>
-                                            <p><strong>Ngày tạo: </strong><span t-esc="property.created_date"/></p>
+                                            <p><strong>Ngày tạo: </strong><span t-esc="property.create_date"/></p>
                                             <a href="/smileliving" class="btn btn-secondary">Quay lại</a>
                                         </div>
                                     </div>
@@ -245,7 +257,7 @@
                                             <div class="alert alert-info mb-4">
                                                 <h5 t-esc="property.name"/>
                                                 <p class="mb-1"><strong>Địa chỉ:</strong> <span t-esc="property.address"/></p>
-                                                <p class="mb-1"><strong>Giá:</strong> <span t-esc="property.price"/> VNĐ</p>
+                                                <p class="mb-1"><strong>Giá:</strong> <span t-esc="property.list_price"/> VNĐ</p>
                                                 <p class="mb-0"><strong>Diện tích:</strong> <span t-esc="property.area"/> m²</p>
                                             </div>
                                             
@@ -325,7 +337,7 @@
                                                 <h6>Thông tin bất động sản:</h6>
                                                 <p class="mb-1"><strong>Tên:</strong> <span t-esc="property.name"/></p>
                                                 <p class="mb-1"><strong>Địa chỉ:</strong> <span t-esc="property.address"/></p>
-                                                <p class="mb-1"><strong>Giá:</strong> <span t-esc="property.price"/> VNĐ</p>
+                                                <p class="mb-1"><strong>Giá:</strong> <span t-esc="property.list_price"/> VNĐ</p>
                                                 <p class="mb-0"><strong>Diện tích:</strong> <span t-esc="property.area"/> m²</p>
                                             </div>
                                             
@@ -345,6 +357,224 @@
                     </section>
                 </div>
             </t>
+        </template>
+
+        <!-- Filter BĐS cho trang shop - Theo cấu trúc website_sale -->
+        <template id="smileliving_shop_filters" inherit_id="website_sale.products" name="SmileLiving Shop Filters">
+            <!-- Đảm bảo sidebar hiển thị khi có filter SmileLiving -->
+            <xpath expr="//t[@t-set='hasLeftColumn']" position="replace">
+                <t t-set="hasLeftColumn" t-value="opt_wsale_categories or opt_wsale_attributes or (property_types and len(property_types) > 0)"/>
+            </xpath>
+            
+            <!-- Thêm filter vào div products_attributes_filters (theo cấu trúc website_sale) -->
+            <xpath expr="//div[contains(@t-attf-class, 'products_attributes_filters')]" position="inside">
+                <!-- Filter Loại Bất Động Sản (type_id) - Giống như attribute filter -->
+                <div t-if="property_types and len(property_types) > 0" class="accordion-item">
+                    <div class="accordion-header h6 mb-0">
+                        <button class="accordion-button px-0 bg-transparent shadow-none" 
+                                type="button" 
+                                data-bs-toggle="collapse" 
+                                data-bs-target="#smileliving_type_filter"
+                                aria-expanded="true">
+                            <b>Loại Bất Động Sản</b>
+                        </button>
+                    </div>
+                    <div id="smileliving_type_filter" class="accordion-collapse collapse show">
+                        <div class="flex-column mb-3">
+                            <form method="get" t-att-action="keep(filter_type_id=0)">
+                                <t t-foreach="property_types" t-as="ptype">
+                                    <div class="form-check mb-1">
+                                        <input type="checkbox"
+                                               name="filter_type_id"
+                                               class="form-check-input"
+                                               t-attf-id="type_#{ptype.id}"
+                                               t-att-value="ptype.id"
+                                               t-att-checked="'checked' if (filter_type_id and str(filter_type_id) == str(ptype.id)) else None"
+                                               onchange="this.form.submit()"/>
+                                        <label class="form-check-label fw-normal" t-attf-for="type_#{ptype.id}" t-field="ptype.name"/>
+                                    </div>
+                                </t>
+                                <!-- Giữ lại các filter khác -->
+                                <t t-if="search">
+                                    <input type="hidden" name="search" t-att-value="search"/>
+                                </t>
+                                <t t-if="category">
+                                    <input type="hidden" name="category" t-att-value="category.id"/>
+                                </t>
+                                <t t-if="attrib_values">
+                                    <t t-foreach="attrib_values" t-as="attrib_value">
+                                        <input type="hidden" name="attribute_values" t-att-value="attrib_value"/>
+                                    </t>
+                                </t>
+                                <t t-if="tags">
+                                    <input type="hidden" name="tags" t-att-value="tags"/>
+                                </t>
+                                <t t-if="min_price">
+                                    <input type="hidden" name="min_price" t-att-value="min_price"/>
+                                </t>
+                                <t t-if="max_price">
+                                    <input type="hidden" name="max_price" t-att-value="max_price"/>
+                                </t>
+                                <t t-if="filter_status">
+                                    <input type="hidden" name="filter_status" t-att-value="filter_status"/>
+                                </t>
+                                <t t-if="filter_area_min">
+                                    <input type="hidden" name="filter_area_min" t-att-value="filter_area_min"/>
+                                </t>
+                                <t t-if="filter_area_max">
+                                    <input type="hidden" name="filter_area_max" t-att-value="filter_area_max"/>
+                                </t>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Filter Trạng thái (house_status) - Dùng radio button vì chỉ chọn một -->
+                <div class="accordion-item">
+                    <div class="accordion-header h6 mb-0">
+                        <button class="accordion-button px-0 bg-transparent shadow-none"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                aria-expanded="true"
+                                data-bs-target="#smileliving_status_filter">
+                            <b>Trạng thái</b>
+                        </button>
+                    </div>
+                    <div id="smileliving_status_filter" class="accordion-collapse collapse show">
+                        <div class="flex-column mb-3">
+                            <form method="get" t-att-action="keep(filter_status=0)">
+                                <!-- Option "Tất cả" -->
+                                <div class="form-check mb-1">
+                                    <input type="radio"
+                                           name="filter_status"
+                                           class="form-check-input"
+                                           id="status_all"
+                                           value=""
+                                           t-att-checked="'checked' if not filter_status else None"
+                                           onchange="this.form.submit()"/>
+                                    <label class="form-check-label fw-normal" for="status_all">Tất cả</label>
+                                </div>
+                                <t t-foreach="status_options" t-as="status_opt">
+                                    <div class="form-check mb-1">
+                                        <input type="radio"
+                                               name="filter_status"
+                                               class="form-check-input"
+                                               t-attf-id="status_#{status_opt[0]}"
+                                               t-att-value="status_opt[0]"
+                                               t-att-checked="'checked' if filter_status == status_opt[0] else None"
+                                               onchange="this.form.submit()"/>
+                                        <label class="form-check-label fw-normal" t-attf-for="status_#{status_opt[0]}" t-esc="status_opt[1]"/>
+                                    </div>
+                                </t>
+                                <!-- Giữ lại các filter khác -->
+                                <t t-if="search">
+                                    <input type="hidden" name="search" t-att-value="search"/>
+                                </t>
+                                <t t-if="category">
+                                    <input type="hidden" name="category" t-att-value="category.id"/>
+                                </t>
+                                <t t-if="attrib_values">
+                                    <t t-foreach="attrib_values" t-as="attrib_value">
+                                        <input type="hidden" name="attribute_values" t-att-value="attrib_value"/>
+                                    </t>
+                                </t>
+                                <t t-if="tags">
+                                    <input type="hidden" name="tags" t-att-value="tags"/>
+                                </t>
+                                <t t-if="min_price">
+                                    <input type="hidden" name="min_price" t-att-value="min_price"/>
+                                </t>
+                                <t t-if="max_price">
+                                    <input type="hidden" name="max_price" t-att-value="max_price"/>
+                                </t>
+                                <t t-if="filter_type_id">
+                                    <input type="hidden" name="filter_type_id" t-att-value="filter_type_id"/>
+                                </t>
+                                <t t-if="filter_area_min">
+                                    <input type="hidden" name="filter_area_min" t-att-value="filter_area_min"/>
+                                </t>
+                                <t t-if="filter_area_max">
+                                    <input type="hidden" name="filter_area_max" t-att-value="filter_area_max"/>
+                                </t>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Filter Diện tích (area) - Giống như price range filter -->
+                <div class="accordion-item">
+                    <div class="accordion-header h6 mb-0">
+                        <button class="accordion-button px-0 bg-transparent shadow-none"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                aria-expanded="true"
+                                data-bs-target="#smileliving_area_filter">
+                            <b>Diện tích (m²)</b>
+                        </button>
+                    </div>
+                    <div id="smileliving_area_filter" class="accordion-collapse collapse show">
+                        <form method="get" t-att-action="keep(filter_area_min=0, filter_area_max=0)">
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <input type="number" 
+                                           name="filter_area_min" 
+                                           class="form-control form-control-sm" 
+                                           placeholder="Từ" 
+                                           t-att-value="filter_area_min" 
+                                           min="0" 
+                                           step="0.01"
+                                           onchange="this.form.submit()"/>
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" 
+                                           name="filter_area_max" 
+                                           class="form-control form-control-sm" 
+                                           placeholder="Đến" 
+                                           t-att-value="filter_area_max" 
+                                           min="0" 
+                                           step="0.01"
+                                           onchange="this.form.submit()"/>
+                                </div>
+                            </div>
+                            <!-- Giữ lại các filter khác -->
+                            <t t-if="search">
+                                <input type="hidden" name="search" t-att-value="search"/>
+                            </t>
+                            <t t-if="category">
+                                <input type="hidden" name="category" t-att-value="category.id"/>
+                            </t>
+                            <t t-if="attrib_values">
+                                <t t-foreach="attrib_values" t-as="attrib_value">
+                                    <input type="hidden" name="attribute_values" t-att-value="attrib_value"/>
+                                </t>
+                            </t>
+                            <t t-if="tags">
+                                <input type="hidden" name="tags" t-att-value="tags"/>
+                            </t>
+                            <t t-if="min_price">
+                                <input type="hidden" name="min_price" t-att-value="min_price"/>
+                            </t>
+                            <t t-if="max_price">
+                                <input type="hidden" name="max_price" t-att-value="max_price"/>
+                            </t>
+                            <t t-if="filter_type_id">
+                                <input type="hidden" name="filter_type_id" t-att-value="filter_type_id"/>
+                            </t>
+                            <t t-if="filter_status">
+                                <input type="hidden" name="filter_status" t-att-value="filter_status"/>
+                            </t>
+                        </form>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+
+        <!-- Ẩn filter attributes mặc định của website_sale (Color, Height, Duration, Fabric, Legs) -->
+        <template id="smileliving_hide_default_attributes" inherit_id="website_sale.products_attributes" name="Hide Default Attributes Filters">
+            <!-- Thay thế toàn bộ nội dung bằng rỗng để ẩn các filter attributes -->
+            <xpath expr="//div[@id='wsale_products_attributes_collapse']" position="replace">
+                <!-- Ẩn filter attributes mặc định -->
+            </xpath>
         </template>
 
     </data>

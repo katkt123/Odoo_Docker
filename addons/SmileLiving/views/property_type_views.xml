@@ -138,7 +138,7 @@
         </record>
 
         <!-- Configuration Menu -->
-        <menuitem id="menu_smileliving_config" name="Cấu Hình" parent="menu_smileliving_house_root" sequence="30"/>
+        <menuitem id="menu_smileliving_config" name="Cấu Hình" parent="menu_house_root" sequence="40"/>
         <menuitem id="menu_smileliving_property_type" name="Loại Bất Động Sản" parent="menu_smileliving_config" 
                   action="action_smileliving_property_type" sequence="10"/>
         <menuitem id="menu_smileliving_amenity" name="Tiện Ích" parent="menu_smileliving_config" 

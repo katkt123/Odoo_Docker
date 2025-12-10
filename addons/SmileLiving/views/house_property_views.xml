@@ -1,97 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- House Property Tree View -->
-        <record id="view_smileliving_house_tree" model="ir.ui.view">
-            <field name="name">smileliving.house.list</field>
-            <field name="model">smileliving.house</field>
-            <field name="arch" type="xml">
-                <list string="Bất Động Sản">
-                    <field name="name"/>
-                    <field name="type_id"/>
-                    <field name="price"/>
-                    <field name="area"/>
-                    <field name="status"/>
-                    <field name="address"/>
-                    <field name="created_date"/>
-                </list>
-            </field>
-        </record>
 
-        <!-- House Property Form View -->
-        <record id="view_smileliving_house_form" model="ir.ui.view">
-            <field name="name">smileliving.house.form</field>
-            <field name="model">smileliving.house</field>
+        <!-- Kế thừa form product.template để thêm tab BĐS -->
+        <record id="view_house_product_form" model="ir.ui.view">
+            <field name="name">house.product.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
             <field name="arch" type="xml">
-                <form string="Bất Động Sản">
-                    <header>
-                        <button name="action_sold" string="Đã Bán" type="object" class="btn-primary" 
-                                invisible="status == 'sold'"/>
-                        <button name="action_reserve" string="Đặt Giữ" type="object" 
-                                invisible="status in ['sold', 'reserved']"/>
-                        <button name="action_available" string="Còn Trống" type="object" 
-                                invisible="status == 'available'"/>
-                        <field name="status" widget="statusbar" statusbar_visible="available,reserved,sold"/>
-                    </header>
-                    <sheet>
-                        <div class="oe_button_box">
-                            <button name="action_view_invoices" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
-                                <field name="invoice_count" widget="statinfo" string="Hóa Đơn"/>
-                            </button>
-                        </div>
-                        <field name="image" widget="image"/>
-                        <div class="oe_title">
-                            <label for="name" class="oe_edit_only"/>
-                            <h1><field name="name"/></h1>
-                        </div>
+
+                <!-- Chỉ hiển thị tab khi is_house = True -->
+                <xpath expr="//notebook" position="inside">
+                    <page string="Bất Động Sản" invisible="not is_house">
                         <group>
-                            <group>
-                                <field name="type_id"/>
-                                <field name="price"/>
-                                <field name="area"/>
-                                <field name="status"/>
-                            </group>
-                            <group>
-                                <field name="created_date"/>
-                                <field name="active"/>
-                            </group>
+                            <field name="type_id"/>
+                            <field name="area"/>
+                            <field name="house_status"/>
+                            <field name="address"/>
+
+                            <field name="latitude"/>
+                            <field name="longitude"/>
                         </group>
-                        <notebook>
-                            <page string="Thông Tin Chi Tiết">
-                                <group>
-                                    <field name="address"/>
-                                    <field name="description"/>
-                                </group>
-                                <group>
-                                    <field name="latitude"/>
-                                    <field name="longitude"/>
-                                </group>
-                                <group>
-                                    <button name="action_open_map_popup" type="object" 
-                                            string="Xem Bản Đồ" 
-                                            class="btn-primary"
-                                            invisible="not google_maps_url"/>
-                                </group>
-                            </page>
-                        </notebook>
-                    </sheet>
-                    
-                </form>
+
+                        <group>
+                            <field name="google_maps_url" readonly="1"/>
+                            <field name="google_maps_iframe" readonly="1"/>
+                        </group>
+
+                        <group>
+                            <button name="action_open_map_popup" type="object" string="Mở Google Maps"/>
+                        </group>
+                    </page>
+                </xpath>
+
+                <!-- Thêm trường is_house vào tab General -->
+                <xpath expr="//field[@name='name']/.." position="after">
+                    <group>
+                        <field name="is_house"/>
+                    </group>
+                </xpath>
+
             </field>
         </record>
 
-        <!-- House Property Action -->
-        <record id="action_smileliving_house" model="ir.actions.act_window">
+        <!-- Menu riêng cho sản phẩm bất động sản -->
+        <record id="action_house_products" model="ir.actions.act_window">
             <field name="name">Bất Động Sản</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">smileliving.house</field>
+            <field name="res_model">product.template</field>
+            <field name="domain">[('is_house','=',True)]</field>
             <field name="view_mode">list,form</field>
-            <field name="view_id" ref="view_smileliving_house_tree"/>
         </record>
 
-        <!-- House Property Menu -->
-        <menuitem id="menu_smileliving_house_root" name="SmileLiving" sequence="10"/>
-        <menuitem id="menu_smileliving_house" name="Bất Động Sản" parent="menu_smileliving_house_root" 
-                  action="action_smileliving_house" sequence="10"/>
+        <menuitem id="menu_house_root" name="SmileLiving" sequence="10"/>
+        <menuitem id="menu_house_items" name="Bất Động Sản" action="action_house_products"
+                  parent="menu_house_root" sequence="20"/>
+
     </data>
 </odoo>

@@ -68,7 +68,7 @@
         </record>
 
         <!-- Invoice Property Menu -->
-        <menuitem id="menu_smileliving_invoice_property" name="Hóa Đơn" parent="menu_smileliving_house_root" 
-                  action="action_smileliving_invoice_property" sequence="20"/>
+        <menuitem id="menu_smileliving_invoice_property" name="Hóa Đơn" parent="menu_house_root" 
+                  action="action_smileliving_invoice_property" sequence="30"/>
     </data>
 </odoo>

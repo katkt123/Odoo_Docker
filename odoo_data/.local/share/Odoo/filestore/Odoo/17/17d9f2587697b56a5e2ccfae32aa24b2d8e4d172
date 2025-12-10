@@ -1,0 +1,8 @@
+
+$o-user-color-palette: map-merge($o-user-color-palette, o-map-omit((
+    'menu-custom': NULL,
+    'menu': 4,
+    'o-color-2': #8F602D,
+    'o-cc3-bg': #BD9400,
+    // -- hook --
+)));

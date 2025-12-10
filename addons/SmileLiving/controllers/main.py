@@ -12,30 +12,21 @@ class SmileLivingController(http.Controller):
     
     @http.route('/smileliving', type='http', auth='public', website=True)
     def homepage(self, **kwargs):
-        """Trang chủ - danh sách properties"""
+        """Trang chủ - chỉ hiển thị BĐS"""
         try:
-            # Debug: Kiểm tra model
-            properties = request.env['smileliving.house'].search([('status', '=', 'available')])
+            # Lấy bất động sản từ product.template
+            properties = request.env['product.template'].search([
+                ('is_house', '=', True),
+                ('house_status', '=', 'available')
+            ])
             
-            # Debug: Kiểm tra template
-            template = request.env.ref('smileliving.homepage', raise_if_not_found=False)
-            
-            debug_info = f"""
-            <h2>DEBUG INFO</h2>
-            <p><strong>Properties found:</strong> {len(properties)}</p>
-            <p><strong>Template exists:</strong> {bool(template)}</p>
-            <p><strong>Module loaded:</strong> SmileLiving</p>
-            """
-            
-            if properties and template:
-                return request.render('smileliving.homepage', {
-                    'properties': properties,
-                })
-            else:
-                return debug_info + "<h3 style='color:red'>ERROR: No properties or template not found!</h3>"
+            return request.render('smileliving.homepage', {
+                'properties': properties,
+            })
                 
         except Exception as e:
             return f"<h1>ERROR: {str(e)}</h1>"
+    
     
     @http.route('/smileliving/properties', type='http', auth='public', website=True)
     def property_listing(self, **kwargs):
@@ -44,7 +35,7 @@ class SmileLivingController(http.Controller):
         if kwargs.get('type'):
             domain.append(('type_id', '=', int(kwargs['type'])))
         
-        properties = request.env['smileliving.house'].search(domain)
+        properties = request.env['product.template'].search(domain + [('is_house', '=', True)])
         property_types = request.env['smileliving.type'].search([])
         
         return request.render('smileliving.property_listing', {
@@ -55,7 +46,7 @@ class SmileLivingController(http.Controller):
     @http.route('/smileliving/property/<int:property_id>', type='http', auth='public', website=True)
     def property_detail(self, property_id, **kwargs):
         """Chi tiết property"""
-        property = request.env['smileliving.house'].browse(property_id)
+        property = request.env['product.template'].browse(property_id)
         if not property.exists():
             return request.not_found()
              
@@ -67,7 +58,7 @@ class SmileLivingController(http.Controller):
     @http.route('/smileliving/interest/<int:property_id>', type='http', auth='public', website=True)
     def show_interest_form(self, property_id, **kwargs):
         """Hiển thị form quan tâm bất động sản"""
-        property = request.env['smileliving.house'].browse(property_id)
+        property = request.env['product.template'].browse(property_id)
         if not property.exists():
             return request.not_found()
              
@@ -79,7 +70,7 @@ class SmileLivingController(http.Controller):
     def submit_interest(self, property_id, **kwargs):
         """Xử lý submit form quan tâm và tạo CRM Lead"""
         try:
-            property = request.env['smileliving.house'].sudo().browse(property_id)
+            property = request.env['product.template'].sudo().browse(property_id)
             if not property.exists():
                 return request.redirect('/smileliving?error=property_not_found')
             
@@ -114,10 +105,10 @@ class SmileLivingController(http.Controller):
             Khách hàng quan tâm bất động sản:
             - Tên bất động sản: {property.name}
             - Địa chỉ: {property.address}
-            - Giá: {property.price:,.0f} VNĐ
+            - Giá: {property.list_price:,.0f} VNĐ
             - Diện tích: {property.area} m²
             - Loại hình: {property.type_id.name if property.type_id else 'Chưa xác định'}
-            - Trạng thái: {dict(property._fields['status'].selection).get(property.status)}
+            - Trạng thái: {dict(property._fields['status'].selection).get(property.house_status)}
             
             Thông tin khách hàng:
             - Họ tên: {name}
@@ -189,7 +180,7 @@ class SmileLivingController(http.Controller):
             
             # Trả về form với lỗi
             try:
-                property = request.env['smileliving.house'].sudo().browse(property_id)
+                property = request.env['product.template'].sudo().browse(property_id)
                 return request.render('smileliving.interest_form', {
                     'property': property,
                     'error': f'Có lỗi xảy ra: {str(e)}',
