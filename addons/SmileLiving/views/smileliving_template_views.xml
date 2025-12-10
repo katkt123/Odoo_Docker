@@ -522,7 +522,7 @@
                                            placeholder="Từ" 
                                            t-att-value="filter_area_min" 
                                            min="0" 
-                                           step="0.01"
+                                           step="1"
                                            onchange="this.form.submit()"/>
                                 </div>
                                 <div class="col-6">
@@ -532,7 +532,7 @@
                                            placeholder="Đến" 
                                            t-att-value="filter_area_max" 
                                            min="0" 
-                                           step="0.01"
+                                           step="1"
                                            onchange="this.form.submit()"/>
                                 </div>
                             </div>
@@ -576,6 +576,142 @@
                 <!-- Ẩn filter attributes mặc định -->
             </xpath>
         </template>
+
+
+
+        <template id="remove_filmstrip" inherit_id="website_sale.products">
+            <xpath expr="//t[@t-call='website_sale.filmstrip_categories']" position="replace">
+                <!-- Thanh tìm kiếm SmileLiving -->
+                <div class="search-bar bg-white rounded shadow-sm p-3 mb-4">
+                    <form method="get" action="/shop" class="d-flex align-items-center gap-2">
+                        <div class="flex-grow-1">
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-0">
+                                    <i class="fa fa-search"></i>
+                                </span>
+                                <input type="text" 
+                                       name="search" 
+                                       class="form-control border-0 ps-0" 
+                                       placeholder="Tìm bất động sản..."
+                                       t-att-value="search"/>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#locationModal">
+                            <i class="fa fa-map-marker-alt"></i> Chọn khu vực
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#propertyTypeModal">
+                            <i class="fa fa-building"></i> Loại hình BĐS
+                        </button>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fa fa-search"></i> Tìm nhà
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Location Selection Modal -->
+                <div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="locationModalLabel">Khu vực</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="provinceSelect" class="form-label">Chọn tỉnh thành <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="provinceSelect">
+                                            <option selected="selected">Toàn quốc</option>
+                                            <option>Hà Nội</option>
+                                            <option>TP. Hồ Chí Minh</option>
+                                            <option>Đà Nẵng</option>
+                                            <option>Hải Phòng</option>
+                                            <option>Cần Thơ</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="districtSelect" class="form-label">Chọn quận huyện <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="districtSelect">
+                                            <option selected="selected">Chọn quận huyện</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="wardSelect" class="form-label">Chọn phường xã <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="wardSelect">
+                                            <option selected="selected">Chọn phường xã</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-warning w-100">Áp dụng</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Property Type Selection Modal -->
+                <div class="modal fade" id="propertyTypeModal" tabindex="-1" aria-labelledby="propertyTypeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="propertyTypeModalLabel">Loại hình BĐS</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="apartment" id="typeApartment"/>
+                                            <label class="form-check-label" for="typeApartment">
+                                                Căn hộ chung cư
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="house" id="typeHouse"/>
+                                            <label class="form-check-label" for="typeHouse">
+                                                Nhà ở riêng lẻ
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="villa" id="typeVilla"/>
+                                            <label class="form-check-label" for="typeVilla">
+                                                Biệt thự
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="land" id="typeLand"/>
+                                            <label class="form-check-label" for="typeLand">
+                                                Đất nền
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="townhouse" id="typeTownhouse"/>
+                                            <label class="form-check-label" for="typeTownhouse">
+                                                Nhà liền kề/nhà phố
+                                            </label>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-warning w-100">Áp dụng</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+
+
 
     </data>
 </odoo>
