@@ -203,6 +203,36 @@ class HouseProduct(models.Model):
         tracking=True,
     )
 
+    # Thông tin địa lý Việt Nam
+    tinhthanh_id = fields.Many2one(
+        'tinh.thanh',
+        string='Tỉnh/Thành phố',
+        tracking=True,
+    )
+    quanhuyen_id = fields.Many2one(
+        'quan.huyen', 
+        string='Quận/Huyện',
+        tracking=True,
+    )
+    phuongxa_id = fields.Many2one(
+        'phuong.xa',
+        string='Phường/Xã',
+        tracking=True,
+    )
+
+    @api.onchange('tinhthanh_id')
+    def _onchange_tinhthanh_id(self):
+        """Khi thay đổi tỉnh thành, xóa quận huyện và phường xã"""
+        if self.tinhthanh_id:
+            self.quanhuyen_id = False
+            self.phuongxa_id = False
+
+    @api.onchange('quanhuyen_id')
+    def _onchange_quanhuyen_id(self):
+        """Khi thay đổi quận huyện, xóa phường xã"""
+        if self.quanhuyen_id:
+            self.phuongxa_id = False
+
     # Google Map
     latitude = fields.Float(
         string='Vĩ Độ',

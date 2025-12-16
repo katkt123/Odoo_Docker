@@ -1,0 +1,14 @@
+<odoo>
+    <template id="assets_frontend_inherit_smileliving" inherit_id="web.assets_frontend" name="smileliving wishlist assets">
+        <xpath expr="//head" position="inside">
+            <script type="text/javascript">//<![CDATA[
+                (function(){
+                    var s = document.createElement('script');
+                    s.type = 'text/javascript';
+                    s.src = '/smileliving/static/src/js/wishlist_interest.js';
+                    document.getElementsByTagName('head')[0].appendChild(s);
+                })();
+            //]]></script>
+        </xpath>
+    </template>
+</odoo>

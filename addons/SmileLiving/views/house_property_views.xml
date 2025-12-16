@@ -17,6 +17,11 @@
                             <field name="area"/>
                             <field name="house_status"/>
                             <field name="address"/>
+                            
+                            <!-- Thêm các trường địa lý -->
+                            <field name="tinhthanh_id"/>
+                            <field name="quanhuyen_id" domain="[('tinhthanh_id', '=', tinhthanh_id)]"/>
+                            <field name="phuongxa_id" domain="[('quanhuyen_id', '=', quanhuyen_id)]"/>
 
                             <field name="latitude"/>
                             <field name="longitude"/>

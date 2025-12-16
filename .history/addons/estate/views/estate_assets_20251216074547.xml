@@ -1,0 +1,7 @@
+<odoo>
+    <template id="assets_frontend_inherit" inherit_id="website.assets_frontend" name="estate wishlist assets">
+        <xpath expr="/" position="inside">
+            <script type="text/javascript" src="/estate/static/src/js/wishlist_interest.js"></script>
+        </xpath>
+    </template>
+</odoo>
