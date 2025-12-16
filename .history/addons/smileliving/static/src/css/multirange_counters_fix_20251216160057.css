@@ -1,0 +1,24 @@
+#o_wsale_price_range_option .multirange-wrapper > small,
+#smileliving_area_range_option .multirange-wrapper > small {
+    display: flex;
+    gap: 0.5rem;
+}
+
+#o_wsale_price_range_option .multirange-wrapper > small .multirange-min,
+#o_wsale_price_range_option .multirange-wrapper > small .multirange-max,
+#smileliving_area_range_option .multirange-wrapper > small .multirange-min,
+#smileliving_area_range_option .multirange-wrapper > small .multirange-max {
+    position: static !important;
+    flex: 1 1 50%;
+    min-width: 0;
+    font-size: 0.7rem;
+    line-height: 1.2;
+
+    /* wrap số */
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+
+    /* CÂN ĐỐI */
+    text-align: center;
+}

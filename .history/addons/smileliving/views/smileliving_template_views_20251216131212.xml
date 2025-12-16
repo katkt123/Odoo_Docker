@@ -1,0 +1,861 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Homepage - Property Listing -->
+        <template id="homepage" name="SmileLiving Homepage">
+            <t t-call="website.layout">
+                <div id="wrap" class="oe_structure">
+                    <section class="py-5">
+                        <div class="container">
+                            <h1 class="mb-4">SmileLiving - Bất Động Sản</h1>
+                            <div class="row">
+                                <t t-foreach="properties" t-as="property">
+                                    <div class="col-lg-4 col-md-6 mb-4">
+                                        <div class="card h-100 shadow-sm">
+                                            <t t-if="property.image_1920">
+                                                <img t-att-src="'/web/image/product.template/' + str(property.id) + '/image_1920'" class="card-img-top" style="height: 200px; object-fit: cover;"/>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                                    <span class="text-muted">Không có hình</span>
+                                                </div>
+                                            </t>
+                                            <div class="card-body d-flex flex-column">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h5 class="card-title" t-esc="property.name"/>
+                                                    <a href="#" class="text-warning favorite-btn" t-att-data-property-id="property.id" title="Quan tâm">
+                                                        <i class="fa fa-heart"></i>
+                                                    </a>
+                                                </div>
+                                                <p class="card-text text-muted small mb-2" t-esc="property.address"/>
+                                                <p class="card-text mb-1"><strong>Giá: </strong><span t-esc="property.list_price"/> VNĐ</p>
+                                                <p class="card-text text-muted small">Diện tích: <span t-esc="property.area"/> m²</p>
+                                                <div class="mt-auto">
+                                                    <span class="badge bg-success" t-if="property.house_status == 'available'">Còn trống</span>
+                                                    <span class="badge bg-warning" t-elif="property.house_status == 'sold'">Đã bán</span>
+                                                    <span class="badge bg-secondary" t-else="">Khác</span>
+                                                    <div class="mt-2">
+                                                        <a t-attf-href="/smileliving/property/{{property.id}}" class="btn btn-primary btn-sm">Xem chi tiết</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                
+                <!-- JavaScript for favorite buttons -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var favoriteBtns = document.querySelectorAll('.favorite-btn');
+                        favoriteBtns.forEach(function(btn) {
+                            btn.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                var propertyId = this.getAttribute('data-property-id');
+                                window.location.href = '/smileliving/interest/' + propertyId;
+                            });
+                        });
+                    });
+                </script>
+                
+                <!-- CSS for favorite buttons -->
+                <style>
+                    .favorite-btn {
+                        font-size: 1.5rem;
+                        text-decoration: none;
+                        transition: all 0.3s ease;
+                        color: #ffc107 !important;
+                    }
+                    .favorite-btn:hover {
+                        color: #ff6b6b !important;
+                        transform: scale(1.1);
+                    }
+                    .favorite-btn:focus {
+                        outline: none;
+                        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+                    }
+                </style>
+            </t>
+        </template>
+
+        <!-- Property Listing -->
+        <template id="property_listing" name="Property Listing">
+            <t t-call="website.layout">
+                <div id="wrap" class="oe_structure">
+                    <section class="py-5">
+                        <div class="container">
+                            <h1 class="mb-4">Danh Sách Bất Động Sản</h1>
+                            
+                            <!-- Filter -->
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <select name="type" class="form-select" onchange="window.location.href='/smileliving/properties?type=' + this.value">
+                                        <option value="">Tất cả loại</option>
+                                        <t t-foreach="property_types" t-as="type">
+                                            <option t-att-value="type.id" t-esc="type.name"/>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Properties Grid -->
+                            <div class="row">
+                                <t t-foreach="properties" t-as="property">
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card">
+                                            <t t-if="property.image_1920">
+                                                <img t-att-src="'/web/image/product.template/' + str(property.id) + '/image_1920'" class="card-img-top"/>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                                    <span class="text-muted">Không có hình</span>
+                                                </div>
+                                            </t>
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <h5 t-esc="property.name"/>
+                                                    <a href="#" class="text-warning favorite-btn" t-att-data-property-id="property.id" title="Quan tâm">
+                                                        <i class="fa fa-heart"></i>
+                                                    </a>
+                                                </div>
+                                                <p class="text-muted" t-esc="property.address"/>
+                                                <p class="mb-1"><strong>Giá: </strong><span t-esc="property.list_price"/> VNĐ</p>
+                                                <p class="text-muted small">Diện tích: <span t-esc="property.area"/> m²</p>
+                                                <span class="badge bg-success" t-if="property.house_status == 'available'">Còn trống</span>
+                                                <span class="badge bg-warning" t-elif="property.house_status == 'sold'">Đã bán</span>
+                                                <br/><br/>
+                                                <a t-attf-href="/smileliving/property/{{property.id}}" class="btn btn-primary">Xem chi tiết</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                
+                <!-- JavaScript for favorite buttons -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var favoriteBtns = document.querySelectorAll('.favorite-btn');
+                        favoriteBtns.forEach(function(btn) {
+                            btn.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                var propertyId = this.getAttribute('data-property-id');
+                                window.location.href = '/smileliving/interest/' + propertyId;
+                            });
+                        });
+                    });
+                </script>
+                
+                <!-- CSS for favorite buttons -->
+                <style>
+                    .favorite-btn {
+                        font-size: 1.5rem;
+                        text-decoration: none;
+                        transition: all 0.3s ease;
+                        color: #ffc107 !important;
+                    }
+                    .favorite-btn:hover {
+                        color: #ff6b6b !important;
+                        transform: scale(1.1);
+                    }
+                    .favorite-btn:focus {
+                        outline: none;
+                        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+                    }
+                </style>
+            </t>
+        </template>
+
+        <!-- Property Detail -->
+        <template id="property_detail" name="Property Detail">
+            <t t-call="website.layout">
+                <div id="wrap" class="oe_structure">
+                    <section class="py-5">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h1 t-esc="property.name"/>
+                                    <p class="text-muted" t-esc="property.address"/>
+                                    
+                                    <div class="mb-3">
+                                        <span class="badge bg-success" t-if="property.house_status == 'available'">Còn trống</span>
+                                        <span class="badge bg-warning" t-elif="property.house_status == 'sold'">Đã bán</span>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <strong>Giá: </strong><span t-esc="property.list_price"/> VNĐ
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Diện tích: </strong><span t-esc="property.area"/> m²
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <strong>Loại hình: </strong>
+                                        <span t-esc="property.type_id.name" t-if="property.type_id"/>
+                                        <span t-else="">Chưa xác định</span>
+                                    </div>
+                                    
+                                    <h4>Mô tả</h4>
+                                    <p t-esc="property.description or 'Chưa có mô tả'"/>
+                                    
+                                    <!-- Google Maps -->
+                                    <div class="mt-4" t-if="google_maps_embed_url">
+                                        <h4>Bản Đồ</h4>
+                                        <div class="ratio ratio-16x9">
+                                            <iframe t-att-src="google_maps_embed_url" 
+                                                    width="100%" 
+                                                    height="450" 
+                                                    style="border:0;" 
+                                                    allowfullscreen="" 
+                                                    loading="lazy">
+                                            </iframe>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Thông tin</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p><strong>Trạng thái: </strong>
+                                                <span class="badge bg-success" t-if="property.house_status == 'available'">Còn trống</span>
+                                                <span class="badge bg-warning" t-elif="property.house_status == 'sold'">Đã bán</span>
+                                            </p>
+                                            <p><strong>Ngày tạo: </strong><span t-esc="property.create_date"/></p>
+                                            <a href="/smileliving" class="btn btn-secondary">Quay lại</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </template>
+
+        <!-- Interest Form -->
+        <template id="interest_form" name="Interest Form">
+            <t t-call="website.layout">
+                <div id="wrap" class="oe_structure">
+                    <section class="py-5">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-md-8">
+                                    <div class="card">
+                                        <div class="card-header bg-primary text-white">
+                                            <h3 class="mb-0">Quan Tâm Bất Động Sản</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <!-- Property Info -->
+                                            <div class="alert alert-info mb-4">
+                                                <h5 t-esc="property.name"/>
+                                                <p class="mb-1"><strong>Địa chỉ:</strong> <span t-esc="property.address"/></p>
+                                                <p class="mb-1"><strong>Giá:</strong> <span t-esc="property.list_price"/> VNĐ</p>
+                                                <p class="mb-0"><strong>Diện tích:</strong> <span t-esc="property.area"/> m²</p>
+                                            </div>
+                                            
+                                            <!-- Error Message -->
+                                            <div t-if="error" class="alert alert-danger">
+                                                <span t-esc="error"/>
+                                            </div>
+                                            
+                                            <!-- Interest Form -->
+                                            <form t-attf-action="/smileliving/submit_interest/{{property.id}}" method="POST">
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="name" class="form-label">Họ tên *</label>
+                                                        <input type="text" class="form-control" id="name" name="name" 
+                                                               t-att-value="values.get('name', '') if values else ''" required="required"/>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="email" class="form-label">Email *</label>
+                                                        <input type="email" class="form-control" id="email" name="email" 
+                                                               t-att-value="values.get('email', '') if values else ''" required="required"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="phone" class="form-label">Số điện thoại *</label>
+                                                        <input type="tel" class="form-control" id="phone" name="phone" 
+                                                               t-att-value="values.get('phone', '') if values else ''" required="required"/>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="message" class="form-label">Tin nhắn</label>
+                                                    <textarea class="form-control" id="message" name="message" rows="4" 
+                                                              t-esc="values.get('message', '') if values else ''"></textarea>
+                                                </div>
+                                                <div class="d-flex justify-content-between">
+                                                    <a t-attf-href="/smileliving/property/{{property.id}}" class="btn btn-secondary">
+                                                        <i class="fa fa-arrow-left"></i> Quay lại
+                                                    </a>
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="fa fa-paper-plane"></i> Gửi Yêu Cầu
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </template>
+
+        <!-- Interest Success -->
+        <template id="interest_success" name="Interest Success">
+            <t t-call="website.layout">
+                <div id="wrap" class="oe_structure">
+                    <section class="py-5">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-md-8">
+                                    <div class="card">
+                                        <div class="card-header bg-success text-white">
+                                            <h3 class="mb-0">Gửi Yêu Cầu Thành Công!</h3>
+                                        </div>
+                                        <div class="card-body text-center">
+                                            <div class="mb-4">
+                                                <i class="fa fa-check-circle text-success" style="font-size: 4rem;"></i>
+                                            </div>
+                                            <h4>Cảm ơn <span t-esc="customer_name"/> đã quan tâm!</h4>
+                                            <p class="text-muted mb-4">
+                                                Chúng tôi đã nhận được yêu cầu quan tâm bất động sản <strong t-esc="property.name"/>.
+                                                Đội ngũ bán hàng sẽ liên hệ với bạn trong thời gian sớm nhất.
+                                            </p>
+                                            
+                                            <div class="alert alert-info text-start">
+                                                <h6>Thông tin bất động sản:</h6>
+                                                <p class="mb-1"><strong>Tên:</strong> <span t-esc="property.name"/></p>
+                                                <p class="mb-1"><strong>Địa chỉ:</strong> <span t-esc="property.address"/></p>
+                                                <p class="mb-1"><strong>Giá:</strong> <span t-esc="property.list_price"/> VNĐ</p>
+                                                <p class="mb-0"><strong>Diện tích:</strong> <span t-esc="property.area"/> m²</p>
+                                            </div>
+                                            
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a href="/smileliving" class="btn btn-primary">
+                                                    <i class="fa fa-home"></i> Xem thêm bất động sản
+                                                </a>
+                                                <a t-attf-href="/smileliving/property/{{property.id}}" class="btn btn-outline-primary">
+                                                    <i class="fa fa-info-circle"></i> Xem chi tiết
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </template>
+
+        <!-- Filter BĐS cho trang shop - Theo cấu trúc website_sale -->
+        <template id="smileliving_shop_filters" inherit_id="website_sale.products" name="SmileLiving Shop Filters">
+            <!-- Đảm bảo sidebar hiển thị khi có filter SmileLiving -->
+            <xpath expr="//t[@t-set='hasLeftColumn']" position="replace">
+                <t t-set="hasLeftColumn" t-value="True"/>
+            </xpath>
+            
+            <!-- Thêm filter vào div products_attributes_filters (theo cấu trúc website_sale) -->
+            <xpath expr="//div[contains(@t-attf-class, 'products_attributes_filters')]" position="inside">
+                <!-- Filter Loại (type_sale) - Mua bán / Cho thuê -->
+                <div class="accordion-item">
+                    <div class="accordion-header h6 mb-0">
+                        <button class="accordion-button px-0 bg-transparent shadow-none"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                aria-expanded="true"
+                                data-bs-target="#smileliving_sale_type_filter">
+                            <b>Loại</b>
+                        </button>
+                    </div>
+                    <div id="smileliving_sale_type_filter" class="accordion-collapse collapse show">
+                        <div class="flex-column mb-3">
+                            <form method="get" t-att-action="keep(type_sale=0)">
+                                <!-- Option "Tất cả" -->
+                                <div class="form-check mb-1">
+                                    <input type="radio"
+                                           name="type_sale"
+                                           class="form-check-input"
+                                           id="sale_type_all"
+                                           value=""
+                                           t-att-checked="'checked' if not type_sale else None"
+                                           onchange="this.form.submit()"/>
+                                    <label class="form-check-label fw-normal" for="sale_type_all">Tất cả</label>
+                                </div>
+                                <div class="form-check mb-1">
+                                    <input type="radio"
+                                           name="type_sale"
+                                           class="form-check-input"
+                                           id="sale_type_sale"
+                                           value="sale"
+                                           t-att-checked="'checked' if type_sale == 'sale' else None"
+                                           onchange="this.form.submit()"/>
+                                    <label class="form-check-label fw-normal" for="sale_type_sale">Mua bán</label>
+                                </div>
+                                <div class="form-check mb-1">
+                                    <input type="radio"
+                                           name="type_sale"
+                                           class="form-check-input"
+                                           id="sale_type_rent"
+                                           value="rent"
+                                           t-att-checked="'checked' if type_sale == 'rent' else None"
+                                           onchange="this.form.submit()"/>
+                                    <label class="form-check-label fw-normal" for="sale_type_rent">Cho thuê</label>
+                                </div>
+
+                                <!-- Giữ lại các filter khác -->
+                                <t t-if="search">
+                                    <input type="hidden" name="search" t-att-value="search"/>
+                                </t>
+                                <t t-if="category">
+                                    <input type="hidden" name="category" t-att-value="category.id"/>
+                                </t>
+                                <t t-if="attrib_values">
+                                    <t t-foreach="attrib_values" t-as="attrib_value">
+                                        <input type="hidden" name="attribute_values" t-att-value="attrib_value"/>
+                                    </t>
+                                </t>
+                                <t t-if="tags">
+                                    <input type="hidden" name="tags" t-att-value="tags"/>
+                                </t>
+                                <t t-if="min_price">
+                                    <input type="hidden" name="min_price" t-att-value="min_price"/>
+                                </t>
+                                <t t-if="max_price">
+                                    <input type="hidden" name="max_price" t-att-value="max_price"/>
+                                </t>
+                                <t t-if="filter_type_id">
+                                    <input type="hidden" name="filter_type_id" t-att-value="filter_type_id"/>
+                                </t>
+                                <t t-if="filter_area_min">
+                                    <input type="hidden" name="filter_area_min" t-att-value="filter_area_min"/>
+                                </t>
+                                <t t-if="filter_area_max">
+                                    <input type="hidden" name="filter_area_max" t-att-value="filter_area_max"/>
+                                </t>
+                                <t t-if="tinhthanh_id">
+                                    <input type="hidden" name="tinhthanh_id" t-att-value="tinhthanh_id"/>
+                                </t>
+                                <t t-if="quanhuyen_id">
+                                    <input type="hidden" name="quanhuyen_id" t-att-value="quanhuyen_id"/>
+                                </t>
+                                <t t-if="phuongxa_id">
+                                    <input type="hidden" name="phuongxa_id" t-att-value="phuongxa_id"/>
+                                </t>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Loại hình BĐS (type_id) -->
+
+
+                <!-- Filter Khu vực (preset theo tỉnh/thành) -->
+                <div class="accordion-item">
+                    <div class="accordion-header h6 mb-0">
+                        <button class="accordion-button px-0 bg-transparent shadow-none"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                aria-expanded="true"
+                                data-bs-target="#smileliving_region_filter">
+                            <b>Khu vực</b>
+                        </button>
+                    </div>
+                    <div id="smileliving_region_filter" class="accordion-collapse collapse show">
+                        <div class="flex-column mb-3">
+                            <form method="get" t-att-action="keep(tinhthanh_id=0, quanhuyen_id=0, phuongxa_id=0)">
+                                <!-- Option "Tất cả" -->
+                                <div class="form-check mb-1">
+                                    <input type="radio"
+                                           name="tinhthanh_id"
+                                           class="form-check-input"
+                                           id="region_all"
+                                           value=""
+                                           t-att-checked="'checked' if not tinhthanh_id else None"
+                                           onchange="this.form.submit()"/>
+                                    <label class="form-check-label fw-normal" for="region_all">Tất cả</label>
+                                </div>
+                                <div class="form-check mb-1">
+                                    <input type="radio"
+                                           name="tinhthanh_id"
+                                           class="form-check-input"
+                                           id="region_hcm"
+                                           value="58"
+                                           t-att-checked="'checked' if str(tinhthanh_id) == '58' else None"
+                                           onchange="this.form.submit()"/>
+                                    <label class="form-check-label fw-normal" for="region_hcm">TP Hồ Chí Minh</label>
+                                </div>
+                                <div class="form-check mb-1">
+                                    <input type="radio"
+                                           name="tinhthanh_id"
+                                           class="form-check-input"
+                                           id="region_hn"
+                                           value="24"
+                                           t-att-checked="'checked' if str(tinhthanh_id) == '24' else None"
+                                           onchange="this.form.submit()"/>
+                                    <label class="form-check-label fw-normal" for="region_hn">Hà Nội</label>
+                                </div>
+                                <div class="form-check mb-1">
+                                    <input type="radio"
+                                           name="tinhthanh_id"
+                                           class="form-check-input"
+                                           id="region_dn"
+                                           value="15"
+                                           t-att-checked="'checked' if str(tinhthanh_id) == '15' else None"
+                                           onchange="this.form.submit()"/>
+                                    <label class="form-check-label fw-normal" for="region_dn">Đà Nẵng</label>
+                                </div>
+
+                                <!-- Giữ lại các filter khác -->
+                                <t t-if="search">
+                                    <input type="hidden" name="search" t-att-value="search"/>
+                                </t>
+                                <t t-if="category">
+                                    <input type="hidden" name="category" t-att-value="category.id"/>
+                                </t>
+                                <t t-if="attrib_values">
+                                    <t t-foreach="attrib_values" t-as="attrib_value">
+                                        <input type="hidden" name="attribute_values" t-att-value="attrib_value"/>
+                                    </t>
+                                </t>
+                                <t t-if="tags">
+                                    <input type="hidden" name="tags" t-att-value="tags"/>
+                                </t>
+                                <t t-if="min_price">
+                                    <input type="hidden" name="min_price" t-att-value="min_price"/>
+                                </t>
+                                <t t-if="max_price">
+                                    <input type="hidden" name="max_price" t-att-value="max_price"/>
+                                </t>
+                                <t t-if="filter_type_id">
+                                    <input type="hidden" name="filter_type_id" t-att-value="filter_type_id"/>
+                                </t>
+                                <t t-if="type_sale">
+                                    <input type="hidden" name="type_sale" t-att-value="type_sale"/>
+                                </t>
+                                <t t-if="filter_area_min">
+                                    <input type="hidden" name="filter_area_min" t-att-value="filter_area_min"/>
+                                </t>
+                                <t t-if="filter_area_max">
+                                    <input type="hidden" name="filter_area_max" t-att-value="filter_area_max"/>
+                                </t>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Diện tích (area) - Giống như price range filter -->
+                <div class="accordion-item">
+                    <div class="accordion-header h6 mb-0">
+                        <button class="accordion-button px-0 bg-transparent shadow-none"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                aria-expanded="true"
+                                data-bs-target="#smileliving_area_filter">
+                            <b>Diện tích (m²)</b>
+                        </button>
+                    </div>
+                    <div id="smileliving_area_filter" class="accordion-collapse collapse show">
+                        <div id="smileliving_area_range_option" class="position-relative">
+                            <input
+                                type="range"
+                                multiple="multiple"
+                                class="form-range range-with-input"
+                                t-att-data-url="keep(filter_area_min=0, filter_area_max=0)"
+                                t-att-step="1"
+                                t-att-min="'%f' % (available_min_area)"
+                                t-att-max="'%f' % (available_max_area)"
+                                t-att-value="'%f,%f' % (filter_area_min, filter_area_max)"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+
+        <!-- Ẩn filter attributes mặc định của website_sale (Color, Height, Duration, Fabric, Legs) -->
+        <template id="smileliving_hide_default_attributes" inherit_id="website_sale.products_attributes" name="Hide Default Attributes Filters">
+            <!-- Thay thế toàn bộ nội dung bằng rỗng để ẩn các filter attributes -->
+            <xpath expr="//div[@id='wsale_products_attributes_collapse']" position="replace">
+                <!-- Ẩn filter attributes mặc định -->
+            </xpath>
+        </template>
+
+        <!-- Đổi nhãn Price Range mặc định thành "Giá" -->
+        <template id="smileliving_remove_default_price_range" inherit_id="website_sale.filter_products_price" name="SmileLiving Rename Price Range">
+            <xpath expr="//b[normalize-space()='Price Range']" position="replace">
+                <b>Giá</b>
+            </xpath>
+        </template>
+
+
+
+        <template id="remove_filmstrip" inherit_id="website_sale.products">
+            <xpath expr="//t[@t-call='website_sale.filmstrip_categories']" position="replace">
+                <!-- Thanh tìm kiếm SmileLiving -->
+                <div class="search-bar bg-white rounded shadow-sm p-3 mb-4">
+                    <form method="get" action="/shop" class="d-flex align-items-center gap-2">
+                        <!-- Hidden inputs to carry location filters -->
+                        <input type="hidden" name="tinhthanh_id" id="location_tinhthanh_id" t-att-value="tinhthanh_id"/>
+                        <input type="hidden" name="quanhuyen_id" id="location_quanhuyen_id" t-att-value="quanhuyen_id"/>
+                        <input type="hidden" name="phuongxa_id" id="location_phuongxa_id" t-att-value="phuongxa_id"/>
+                        <!-- (Removed) property type filters -->
+                        <div class="flex-grow-1">
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-0">
+                                    <i class="fa fa-search"></i>
+                                </span>
+                                <input type="text" 
+                                       name="search" 
+                                       class="form-control border-0 ps-0" 
+                                       placeholder="Tìm bất động sản..."
+                                       t-att-value="search"/>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#locationModal">
+                            <i class="fa fa-map-marker"></i> Chọn khu vực
+                            <span class="badge bg-danger ms-1 d-none" id="locationBadge"></span>
+                        </button>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fa fa-search"></i> Tìm nhà
+                        </button>
+                        <a href="/shop" class="btn btn-outline-secondary">
+                            <i class="fa fa-times"></i> Xóa lọc
+                        </a>
+                    </form>
+                </div>
+
+                <!-- Location Selection Modal -->
+                <div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="locationModalLabel">Khu vực</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="provinceSelect" class="form-label">Chọn tỉnh thành <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="provinceSelect" name="tinhthanh_id">
+                                            <option value="">Toàn quốc</option>
+                                            <t t-foreach="tinhthanhs" t-as="tinhthanh">
+                                                <option t-att-value="tinhthanh.id" t-esc="tinhthanh.name"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="districtSelect" class="form-label">Chọn quận huyện <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="districtSelect" name="quanhuyen_id">
+                                            <option value="">Chọn quận huyện</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="wardSelect" class="form-label">Chọn phường xã <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="wardSelect" name="phuongxa_id">
+                                            <option value="">Chọn phường xã</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-warning w-100" id="applyLocationBtn">Áp dụng</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- JavaScript cho location modal -->
+                <script type="text/javascript">
+                    <![CDATA[
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var provinceSelect = document.getElementById('provinceSelect');
+                        var districtSelect = document.getElementById('districtSelect');
+                        var wardSelect = document.getElementById('wardSelect');
+                        var applyBtn = document.getElementById('applyLocationBtn');
+                        var hiddenTinh = document.getElementById('location_tinhthanh_id');
+                        var hiddenQuan = document.getElementById('location_quanhuyen_id');
+                        var hiddenPhuong = document.getElementById('location_phuongxa_id');
+                        var searchForm = document.querySelector('.search-bar form');
+                        var locationBadge = document.getElementById('locationBadge');
+
+                        function setBadge(badgeEl, count) {
+                            if (!badgeEl) {
+                                return;
+                            }
+                            if (count && count > 0) {
+                                badgeEl.textContent = String(count);
+                                badgeEl.classList.remove('d-none');
+                            } else {
+                                badgeEl.textContent = '';
+                                badgeEl.classList.add('d-none');
+                            }
+                        }
+
+                        function getSelectedLocationCount() {
+                            var count = 0;
+                            if (hiddenTinh && hiddenTinh.value) { count += 1; }
+                            if (hiddenQuan && hiddenQuan.value) { count += 1; }
+                            if (hiddenPhuong && hiddenPhuong.value) { count += 1; }
+                            return count;
+                        }
+
+                        function updateLocationBadge() {
+                            setBadge(locationBadge, getSelectedLocationCount());
+                        }
+
+                        function resetDistrictAndWard() {
+                            if (districtSelect) {
+                                districtSelect.innerHTML = '<option value="">Chọn quận huyện</option>';
+                            }
+                            if (wardSelect) {
+                                wardSelect.innerHTML = '<option value="">Chọn phường xã</option>';
+                            }
+                        }
+
+                        function loadDistricts(tinhthanhId, presetDistrict) {
+                            resetDistrictAndWard();
+                            if (!tinhthanhId) {
+                                return Promise.resolve();
+                            }
+                            return fetch('/smileliving/get_quanhuyen', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    jsonrpc: '2.0',
+                                    method: 'call',
+                                    params: { tinhthanh_id: tinhthanhId },
+                                    id: Math.random()
+                                })
+                            })
+                            .then(function(response) { return response.json(); })
+                            .then(function(response) {
+                                if (response.result && districtSelect) {
+                                    response.result.forEach(function(quanhuyen) {
+                                        var option = document.createElement('option');
+                                        option.value = quanhuyen.id;
+                                        option.textContent = quanhuyen.name;
+                                        districtSelect.appendChild(option);
+                                    });
+                                    if (presetDistrict) {
+                                        districtSelect.value = presetDistrict;
+                                    }
+                                }
+                            });
+                        }
+
+                        function loadWards(quanhuyenId, presetWard) {
+                            if (wardSelect) {
+                                wardSelect.innerHTML = '<option value="">Chọn phường xã</option>';
+                            }
+                            if (!quanhuyenId) {
+                                return Promise.resolve();
+                            }
+                            return fetch('/smileliving/get_phuongxa', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    jsonrpc: '2.0',
+                                    method: 'call',
+                                    params: { quanhuyen_id: quanhuyenId },
+                                    id: Math.random()
+                                })
+                            })
+                            .then(function(response) { return response.json(); })
+                            .then(function(response) {
+                                if (response.result && wardSelect) {
+                                    response.result.forEach(function(phuongxa) {
+                                        var option = document.createElement('option');
+                                        option.value = phuongxa.id;
+                                        option.textContent = phuongxa.name;
+                                        wardSelect.appendChild(option);
+                                    });
+                                    if (presetWard) {
+                                        wardSelect.value = presetWard;
+                                    }
+                                }
+                            });
+                        }
+
+                        if (provinceSelect) {
+                            provinceSelect.addEventListener('change', function() {
+                                var tinhthanhId = this.value;
+                                resetDistrictAndWard();
+                                hiddenTinh.value = tinhthanhId;
+                                hiddenQuan.value = '';
+                                hiddenPhuong.value = '';
+                                loadDistricts(tinhthanhId);
+                                updateLocationBadge();
+                            });
+                        }
+
+                        if (districtSelect) {
+                            districtSelect.addEventListener('change', function() {
+                                var quanhuyenId = this.value;
+                                if (wardSelect) {
+                                    wardSelect.innerHTML = '<option value="">Chọn phường xã</option>';
+                                }
+                                hiddenQuan.value = quanhuyenId;
+                                hiddenPhuong.value = '';
+                                loadWards(quanhuyenId);
+                                updateLocationBadge();
+                            });
+                        }
+
+                        if (wardSelect) {
+                            wardSelect.addEventListener('change', function() {
+                                hiddenPhuong.value = this.value;
+                                updateLocationBadge();
+                            });
+                        }
+
+                        if (applyBtn && searchForm) {
+                            applyBtn.addEventListener('click', function() {
+                                hiddenTinh.value = provinceSelect ? provinceSelect.value : '';
+                                hiddenQuan.value = districtSelect ? districtSelect.value : '';
+                                hiddenPhuong.value = wardSelect ? wardSelect.value : '';
+                                updateLocationBadge();
+                                searchForm.submit();
+                            });
+                        }
+
+                        updateLocationBadge();
+
+                        var presetTinh = hiddenTinh ? hiddenTinh.value : '';
+                        var presetQuan = hiddenQuan ? hiddenQuan.value : '';
+                        var presetPhuong = hiddenPhuong ? hiddenPhuong.value : '';
+
+                        if (presetTinh && provinceSelect) {
+                            provinceSelect.value = presetTinh;
+                            loadDistricts(presetTinh, presetQuan).then(function() {
+                                if (presetQuan) {
+                                    loadWards(presetQuan, presetPhuong);
+                                }
+                            });
+                        }
+                    });
+                    ]]>
+                </script>
+            </xpath>
+        </template>
+
+
+    </data>
+</odoo>

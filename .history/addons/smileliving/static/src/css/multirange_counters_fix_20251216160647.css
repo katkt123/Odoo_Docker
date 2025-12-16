@@ -1,0 +1,14 @@
+/* Fix overlap of multirange min/max counters when numbers are long.
+   Keep default left/right placement and only reduce font size.
+   Scoped to SmileLiving filters only (price + area). */
+
+#o_wsale_price_range_option .multirange-wrapper > small .multirange-min,
+#o_wsale_price_range_option .multirange-wrapper > small .multirange-max,
+#smileliving_area_range_option .multirange-wrapper > small .multirange-min,
+#smileliving_area_range_option .multirange-wrapper > small .multirange-max {
+	font-size: 0.6rem;
+	line-height: 1.1;
+	max-width: 48%;
+	white-space: nowrap;
+}
+

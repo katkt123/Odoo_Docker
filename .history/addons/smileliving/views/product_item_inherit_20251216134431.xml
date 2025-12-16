@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="product_item_area" inherit_id="website_sale.products_item" name="SmileLiving Product Item Area">
+        <!-- Add label before the existing formatted price -->
+        <xpath expr="(//div[contains(concat(' ', normalize-space(@class), ' '), ' product_price ')])[last()]/*[1]" position="before">
+            <span class="fw-bold">Giá:</span>
+        </xpath>
+
+        <!-- Show area after the (last) price block to avoid odd ordering -->
+        <xpath expr="(//div[contains(concat(' ', normalize-space(@class), ' '), ' product_price ')])[last()]" position="after">
+            <t t-if="product.area">
+                <div class="fw-bold mt-1">
+                    Diện tích: <t t-esc="product.area"/> m²
+                </div>
+            </t>
+        </xpath>
+    </template>
+</odoo>

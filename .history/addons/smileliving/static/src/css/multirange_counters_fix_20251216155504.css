@@ -1,0 +1,25 @@
+/* Fix overlap of multirange min/max counters when numbers are long.
+   Scoped to SmileLiving filters only (price + area). */
+
+#o_wsale_price_range_option .multirange-wrapper > small,
+#smileliving_area_range_option .multirange-wrapper > small {
+    gap: 0.5rem;
+}
+
+#o_wsale_price_range_option .multirange-wrapper > small .multirange-min,
+#o_wsale_price_range_option .multirange-wrapper > small .multirange-max,
+#smileliving_area_range_option .multirange-wrapper > small .multirange-min,
+#smileliving_area_range_option .multirange-wrapper > small .multirange-max {
+    position: static !important;
+    flex: 1 1 0;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.75rem;
+}
+
+#o_wsale_price_range_option .multirange-wrapper > small .multirange-max,
+#smileliving_area_range_option .multirange-wrapper > small .multirange-max {
+    text-align: right;
+}

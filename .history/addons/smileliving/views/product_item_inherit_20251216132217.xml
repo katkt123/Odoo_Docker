@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="product_item_area" inherit_id="website_sale.products_item" name="SmileLiving Product Item Area">
+        <xpath expr="//div[contains(@class, 'product_price')]" position="after">
+            <t t-if="product.area">
+                <div class="text-muted small mt-1">
+                    Diện tích: <t t-esc="product.area"/> m²
+                </div>
+            </t>
+        </xpath>
+    </template>
+</odoo>
