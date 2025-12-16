@@ -10217,12 +10217,12 @@ return _t("Choose a pick-up point");},get validationButtonLabel(){return _t("Cho
 /* /website_sale/static/src/js/location_selector/map_container/map_container.js */
 odoo.define('@website_sale/js/location_selector/map_container/map_container',['@delivery/js/location_selector/map_container/map_container','@web/core/utils/patch','@web/core/l10n/translation'],function(require){'use strict';let __exports={};const{MapContainer}=require('@delivery/js/location_selector/map_container/map_container');const{patch}=require('@web/core/utils/patch');const{_t}=require('@web/core/l10n/translation');patch(MapContainer.prototype,{get errorMessage(){return _t("There was an error loading the map");},get chooseLocationButtonLabel(){return _t("Choose this location");},get openingHoursLabel(){return _t("Opening hours");},});return __exports;});;
 
-/* /smileliving/static/src/js/wishlist_interest.js */
-odoo.define('@smileliving/js/wishlist_interest',[],function(require){'use strict';let __exports={};function replaceAddToCartWithInterest(){if(window.location.pathname!=='/shop/wishlist'){return;}
-const buttons=document.querySelectorAll('button.o_wsale_product_btn_primary, a.o_wsale_product_btn_primary');buttons.forEach((btn)=>{if(btn.dataset.smilelivingInterestApplied==='1'){return;}
-const form=btn.closest('form');const tmplInput=form?form.querySelector('input[name="product_template_id"]'):null;const templateId=tmplInput?parseInt(tmplInput.value,10):NaN;if(!templateId){return;}
-const interestUrl=`/smileliving/interest/${templateId}`;const interestEl=document.createElement('a');interestEl.dataset.smilelivingInterestApplied='1';interestEl.href=interestUrl;interestEl.role='button';interestEl.title='Interest';interestEl.setAttribute('aria-label','Interest');interestEl.className=(btn.className||'').split(/\s+/).filter((c)=>c&&c!=='a-submit').join(' ');interestEl.textContent='Interest';btn.replaceWith(interestEl);});}
-document.addEventListener('DOMContentLoaded',()=>{replaceAddToCartWithInterest();const target=document.querySelector('main');if(target){const mo=new MutationObserver(()=>replaceAddToCartWithInterest());mo.observe(target,{childList:true,subtree:true});}});Object.assign(__exports,{replaceAddToCartWithInterest});return __exports;});;
+/* /smileliving/static/src/interactions/area_range.js */
+odoo.define('@smileliving/interactions/area_range',['@web/public/interaction','@web/core/utils/urls','@web/core/registry'],function(require){'use strict';let __exports={};const{Interaction}=require('@web/public/interaction');const{redirect}=require('@web/core/utils/urls');const{registry}=require('@web/core/registry');const AreaRange=__exports.AreaRange=class AreaRange extends Interaction{static selector='#smileliving_area_range_option';dynamicContent={'input[type="range"]':{'t-on-newRangeValue':this.onAreaRangeSelected},};onAreaRangeSelected(ev){const range=ev.currentTarget;const url=new URL(range.dataset.url,window.location.origin);const searchParams=url.searchParams;if(parseFloat(range.min)!==range.valueLow){searchParams.set('filter_area_min',range.valueLow);}
+if(parseFloat(range.max)!==range.valueHigh){searchParams.set('filter_area_max',range.valueHigh);}
+const product_list_div=document.querySelector('.o_wsale_products_grid_table_wrapper');if(product_list_div){product_list_div.classList.add('opacity-50');}
+redirect(`${url.pathname}?${searchParams.toString()}`);}}
+registry.category('public.interactions').add('smileliving.area_range',AreaRange);return __exports;});;
 
 /* /auth_passkey/static/lib/simplewebauthn.js */
 odoo.define('@auth_passkey/../lib/simplewebauthn',[],function(require){'use strict';let __exports={};function utf8StringToBuffer(value){return new TextEncoder().encode(value);}
