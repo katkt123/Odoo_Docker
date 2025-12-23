@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="smileliving_http_routing_404_inherit" inherit_id="http_routing.404" name="SmileLiving - Custom 404">
+        <xpath expr="//template[@id='404']//div[@id='wrap']/div[contains(concat(' ', normalize-space(@class), ' '), ' oe_structure ')]" position="after">
+            <section class="s_text_block pt48 pb48" data-snippet="s_text_block" data-name="SmileLiving - Latest Products">
+                <div class="container">
+                    <t t-set="website" t-value="request.website"/>
+                    <t t-set="website_company" t-value="website.company_id"/>
+                    <t t-set="partner" t-value="request.env.user.partner_id"/>
+                    <t t-set="pricelist" t-value="website._get_and_cache_current_pricelist()"/>
+
+                    <t t-set="products" t-value="request.env['product.template'].sudo().with_company(website_company).search([
+                        ('sale_ok', '=', True),
+                        ('is_published', '=', True),
+                        ('is_house', '=', True),
+                        ('company_id', 'in', [website_company.id, False]),
+                    ], order='create_date desc, id desc', limit=4)"/>
+
+                    <div class="row align-items-center mb-3">
+                        <div class="col-md-8">
+                            <h3 class="mb-0">Sản phẩm mới nhất</h3>
+                        </div>
+                        <div class="col-md-4 text-md-end mt-2 mt-md-0">
+                            <a class="btn btn-primary" href="/shop">Xem tất cả</a>
+                        </div>
+                    </div>
+
+                    <t t-if="products">
+                        <div class="row">
+                            <t t-foreach="products" t-as="product">
+                                <t t-set="p" t-value="product.with_context(pricelist=pricelist.id, partner=partner.id)"/>
+                                <div class="col-lg-3 col-md-6 mb-4">
+                                    <a t-att-href="product.website_url" class="text-decoration-none d-block h-100">
+                                        <div class="card h-100">
+                                            <img class="card-img-top img-fluid" t-att-src="'/web/image/product.template/%s/image_512' % product.id" t-att-alt="product.name"/>
+                                            <div class="card-body">
+                                                <h6 class="card-title text-dark" t-esc="product.name"/>
+                                                <div class="fw-semibold text-primary">
+                                                    <span t-field="p.website_price" t-options="{'widget': 'monetary', 'display_currency': pricelist.currency_id}"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <p class="mb-0">Hiện chưa có sản phẩm để gợi ý.</p>
+                    </t>
+                </div>
+            </section>
+        </xpath>
+    </template>
+</odoo>

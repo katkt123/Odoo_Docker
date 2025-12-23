@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Kế thừa form product.template để thêm tab BĐS -->
+        <record id="view_house_product_form" model="ir.ui.view">
+            <field name="name">house.product.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+
+                <!-- Ẩn Sales / Purchase khi là BĐS (thay bằng Loại: Mua bán/Cho thuê) -->
+                <xpath expr="//field[@name='sale_ok']" position="attributes">
+                    <attribute name="invisible">is_house</attribute>
+                </xpath>
+                <xpath expr="//field[@name='purchase_ok']" position="attributes">
+                    <attribute name="invisible">is_house</attribute>
+                </xpath>
+
+                <!-- Chỉ hiển thị tab khi is_house = True -->
+                <xpath expr="//notebook" position="inside">
+                    <page string="Bất Động Sản" invisible="not is_house">
+                        <group>
+                            <field name="type_id"/>
+                            <field name="type_sale"/>
+                            <field name="area"/>
+                            <field name="house_status"/>
+                            <field name="address"/>
+                            
+                            <!-- Thêm các trường địa lý -->
+                            <field name="tinhthanh_id"/>
+                            <field name="quanhuyen_id" domain="[('tinhthanh_id', '=', tinhthanh_id)]"/>
+                            <field name="phuongxa_id" domain="[('quanhuyen_id', '=', quanhuyen_id)]"/>
+
+                            <field name="latitude"/>
+                            <field name="longitude"/>
+                        </group>
+
+                        <group>
+                            <field name="google_maps_url" readonly="1"/>
+                            <field name="google_maps_iframe" readonly="1"/>
+                        </group>
+
+                        <group>
+                            <button name="action_open_map_popup" type="object" string="Mở Google Maps"/>
+                        </group>
+                    </page>
+                </xpath>
+
+                <!-- Thêm trường is_house vào tab General -->
+                <xpath expr="//field[@name='name']/.." position="after">
+                    <group>
+                        <field name="is_house"/>
+                        <field name="type_sale" invisible="not is_house"/>
+                    </group>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- Menu riêng cho sản phẩm bất động sản -->
+        <record id="action_house_products" model="ir.actions.act_window">
+            <field name="name">Bất Động Sản</field>
+            <field name="res_model">product.template</field>
+            <field name="domain">[('is_house','=',True)]</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="menu_house_root" name="SmileLiving" sequence="10"/>
+        <menuitem id="menu_house_items" name="Bất Động Sản" action="action_house_products"
+                  parent="menu_house_root" sequence="20"/>
+
+    </data>
+</odoo>
